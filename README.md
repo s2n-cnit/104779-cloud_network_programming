@@ -4,7 +4,7 @@
 
 ### 2025
 
- 1. [18th February 2024](lessons/2024/02-18)
+ 1. [18th February 2025](lessons/2024/02-18)
 
 ## Extra
 
