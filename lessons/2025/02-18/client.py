@@ -13,8 +13,8 @@ def main():  # sourcery skip: extract-duplicate-method
 
     print("Socket created")
 
-    target_host = "localhost"  # "127.0.0.1" is the same
-    target_port = 32000  # Standard port for Web Server
+    target_host = "130.251.245.122"  # "127.0.0.1" is the same
+    target_port = 32002  # Standard port for Web Server
     addr = (target_host, target_port)
     try:
         s.connect(addr)
