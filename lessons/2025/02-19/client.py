@@ -15,7 +15,8 @@ def main():
 
     print("Socket created")
 
-    config = yaml.safe_load(open("config.yaml", "r"))
+    stream = open("config.yaml", "r")
+    config = yaml.safe_load(stream)
     addr = (config["server"]["host"], config["server"]["port"])
     name = config["name"]
 
