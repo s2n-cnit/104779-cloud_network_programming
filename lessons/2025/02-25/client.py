@@ -21,9 +21,9 @@ def main():
         ).start()
         msg = "x"
         while msg != "end":
-            lock.acquire()
+            # lock.acquire()
             msg = input("Message: ")
-            lock.release()
+            # lock.release()
             s.send(msg.encode())
         print("Connection closed")
         s.close()
@@ -36,11 +36,13 @@ def main():
 
 
 def recv_manager(sock):
-    while True:
-        d = json.loads(sock.recv(10000).decode())
-        lock.acquire()
-        print(f"{d['name']} >", d["msg"])
-        lock.release()
-
+    try:
+        while True:
+            d = json.loads(sock.recv(10000).decode())
+            # lock.acquire()
+            print(f"{d['name']} ({d['timestamp']}) >", d["msg"])
+            # lock.release()
+    except ConnectionAbortedError:
+        pass
 
 main()

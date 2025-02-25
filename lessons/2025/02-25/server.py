@@ -1,6 +1,7 @@
 import json
 import socket
 import sys
+from datetime import datetime
 from threading import Thread
 
 from data import server_addr
@@ -20,7 +21,13 @@ def main():
             clients[c_addr] = c_sock
 
             c_name = c_sock.recv(200).decode()
-            print(f"{c_name} joins the chat")
+            dt = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            msg = "joins the chat"
+            print(f"{c_name} ({dt}) > {msg}")
+            for c_addr_other, c_sock_other in clients.items():
+                if c_addr_other != c_addr and c_sock_other != c_sock:
+                    d = {"name": c_name, "msg": msg, "timestamp": dt}
+                    c_sock_other.send(json.dumps(d).encode())
             Thread(
                 target=client_manager,
                 kwargs={"name": c_name, "sock": c_sock, "addr": c_addr},
@@ -36,13 +43,19 @@ def client_manager(name, sock, addr):
     msg = "x"
     while msg != "end":
         msg = sock.recv(200).decode()
+        dt = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
         if msg != "end":
-            print(f"{name} >", msg)
-        for c_addr, c_sock in clients.items():
-            if c_addr != addr:
-                d = {"name": name, "msg": msg}
-                c_sock.send(json.dumps(d).encode())
-    print(f"{name} leaves the chat")
+            print(f"{name} ({dt}) >", msg)
+            for c_addr, c_sock in clients.items():
+                if c_addr != addr:
+                    d = {"name": name, "msg": msg, "timestamp": dt}
+                    c_sock.send(json.dumps(d).encode())
+    msg = "leaves the chat"
+    print(f"{name} ({dt}) > {msg}")
+    del clients[c_addr]
+    for c_addr, c_sock in clients.items():
+        d = {"name": name, "msg": msg, "timestamp": dt}
+        c_sock.send(json.dumps(d).encode())
     sock.close()
 
 
