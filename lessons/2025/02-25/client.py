@@ -37,12 +37,15 @@ def main() -> None:
 
 def recv_manager(sock: socket) -> None:
     try:
-        while True:
-            d = json.loads(sock.recv(10000).decode())
-            # lock.acquire()
-            print(f"{d['name']} ({d['timestamp']}) >", d["msg"])
-            # lock.release()
-    except ConnectionAbortedError:
+        while not sock._closed:
+            try:
+                d = json.loads(sock.recv(10000).decode())
+                # lock.acquire() # The lock should be used to avoid the execution of other code from other threads
+                print(f"{d['name']} ({d['timestamp']}) >", d["msg"])
+                # lock.release()
+            except json.decoder.JSONDecodeError:
+                pass
+    except ConnectionAbortedError or OSError:
         pass
 
 
