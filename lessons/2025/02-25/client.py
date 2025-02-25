@@ -8,7 +8,7 @@ from utils import manage_exception
 lock = Lock()
 
 
-def main():
+def main() -> None:
     try:
         # create a TCP socket (SOCK_STREAM)
         s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=0)
@@ -35,7 +35,7 @@ def main():
         manage_exception("socket creation", err)
 
 
-def recv_manager(sock):
+def recv_manager(sock: socket) -> None:
     try:
         while True:
             d = json.loads(sock.recv(10000).decode())
@@ -44,5 +44,6 @@ def recv_manager(sock):
             # lock.release()
     except ConnectionAbortedError:
         pass
+
 
 main()
