@@ -65,8 +65,11 @@ Type \"end\" to terminate.
         self.__app.run()
 
     def __accept(self: UI, _: any) -> None:
+        msg: str = self.__input_field.text
         try:
-            self.__socket.send(self.__input_field.text.encode())
+            self.__socket.send(msg.encode())
+            if msg == "end":
+                sys.exit(0)
         except BrokenPipeError:
             sys.exit(0)
 

@@ -21,8 +21,7 @@ def main() -> None:
             c_sock, c_addr = s.accept()
             clients[c_addr] = c_sock
             c_name = c_sock.recv(200).decode()
-            dt = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-            send_from(c_addr, {"name": c_name, "msg": "joins the chat", "timestamp": dt})
+            send_from(c_addr, {"name": c_name, "msg": "joins the chat"})
             Thread(
                 target=client_manager,
                 kwargs={"name": c_name, "sock": c_sock, "addr": c_addr},
@@ -38,19 +37,24 @@ def client_manager(name: str, sock: socket, addr: Tuple[str, int]) -> None:
     msg = "x"
     while msg != "end":
         msg = sock.recv(200).decode()
-        dt = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
         if msg != "end":
-            send_from(addr, {"name": name, "msg": msg, "timestamp": dt})
+            send_from(addr, {"name": name, "msg": msg})
     del clients[addr]
-    send_from(addr, {"name": name, "msg": "leaves the chat", "timestamp": dt})
+    send_from(addr, {"name": name, "msg": "leaves the chat"})
     sock.close()
 
 
 def send_from(addr: str, data: Dict[str, any]) -> None:
+    data["timestamp"] = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     print(f"{data["name"]} ({data["timestamp"]}) >", data["msg"])
     for c_addr, c_sock in clients.items():
         if c_addr != addr:
             c_sock.send(json.dumps(data).encode())
 
+        # This solution is bad in terms of performance and even conceptually
+        # if c_addr == addr:
+        #     pass
+        # else:
+        #     c_sock.send(json.dumps(data).encode())
 
 main()

@@ -55,6 +55,8 @@ class Server(SocketExtended):
                 self.__dispatch_to_others(f"{name} ({d})> {msg}")
         msg = f"{name} leaves the chat"
         self._log.warning(msg)
+        d = datetime.now()
+        msg = f"{name} ({d}) leaves the chat"
         for client_socket in self.__client_sockets:
             try:
                 client_socket.send(msg.encode())
