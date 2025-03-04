@@ -83,7 +83,7 @@ Type \"end\" to terminate.
                     message = message[1:]
                     c = message.split(" ")
                     message = " ".join(c[1:])
-                    topic = [f"yacr-{c[0]}", f"yacr-{self.__config.name}"]
+                    topic = [f"yacr-{c[0].lower()}", f"yacr-{self.__config.name.lower()}"]
                     type = ["*", f"*{c[0]}"]
                 else:
                     topic = ["yacr"]
@@ -118,7 +118,7 @@ Type \"end\" to terminate.
             try:
                 sub = self.__redis.pubsub()
                 if private:
-                    sub.subscribe(f"yacr-{self.__config.name}")
+                    sub.subscribe(f"yacr-{self.__config.name.lower()}")
                 else:
                     sub.subscribe("yacr")
             except redis.exceptions.ConnectionError as conn_err:
