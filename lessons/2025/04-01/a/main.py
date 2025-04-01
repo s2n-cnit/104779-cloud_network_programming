@@ -13,7 +13,6 @@ def test_post():
 def read_root():
     return {"Hello": "World"}
 
-@app.get("/items/{item_id}")
-@app.get("/items")
-def read_item(item_id: Union[str, None] = "bye", q: Union[str, None] = "hello"):
-    return {"item_id": item_id, "q": q}
+@app.get("/items/{item_id}")  # items/ciao
+def read_item(c: str | None = None, item_id: str | None = "bye", q: Union[str, None] = "hello"):
+    return {"item_id": item_id, "q": q, "c": c}
