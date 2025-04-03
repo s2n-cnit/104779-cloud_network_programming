@@ -17,7 +17,7 @@ class User(SQLModel, table=True):
     first_name: str
     last_name: str
     email: str = Field(sa_column=Column("email", String, unique=True))
-    creation_at: datetime
+    creation_at: datetime = Field(default=datetime.now())
     is_active: bool = Field(default=False)
     bio: str | None = None
     age: int | None = None
@@ -31,7 +31,7 @@ class User(SQLModel, table=True):
 class Room(SQLModel, table=True):
     id: str = Field(primary_key=True)
     max_user: int | None = None
-    creation_at: datetime
+    creation_at: datetime = Field(default=datetime.now())
 
     users: List[User] = Relationship(
         back_populates="rooms", link_model=UserRoom
@@ -45,7 +45,7 @@ class Message(SQLModel, table=True):
     )
     user_id: str = Field(foreign_key="user.id")
     room_id: str = Field(foreign_key="room.id")
-    sent_at: datetime
+    sent_at: datetime = Field(default=datetime.now())
     content: str
 
     user: User = Relationship(back_populates="messages")
@@ -64,10 +64,8 @@ class Result[Type: SQLModel](BaseModel):
         data: str,
         success: bool = True,
     ):
-        self.success = success
-        self.detail = detail
-        self.timestamp = datetime.now()
-        self.data = data
+        self.__init__(detail=detail, data=data, success=success)
+        self.timestamp = datetime.now(),
 
 
 class ResultType[Type: SQLModel]:

@@ -5,29 +5,25 @@ Entities:
   - avatar
   - age
   - gender
-  - timestamp_creation   (created_at)
-  - timestamp_update     (updated_at)
+  - created_at
+  - updated_at
 
 - Room
   - name [PK]
-  - timestamp_creation   (created_at)
-  - timestamp_update     (updated_at)
-
-- Message
-  - timestamp     (created_at)
+  - created_at
   - updated_at
-  - content
 
-- UserRoom
-  - username
-  - room_name
-  - timestamp_join   (joined_at)
-  - timestamp_update  (updated_at)
+- UserRoom # Relation User (N) <-> Room (M)
+  - id [PK]
+  - username [FK]
+  - room_name [FK]
+  - joined_at
+  - updated_at
   - leaved_at
 
-
-FacebookUser
-  ...
-  ...
-  ...
-  deleted [Boolean]
+- UserRoomMessage # Relation User / Room (1) <-> Message (N)
+  - user_room_id [FK]
+  - message_id [PK]
+  - updated_at
+  - created_at
+  - content

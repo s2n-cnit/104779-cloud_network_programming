@@ -6,6 +6,8 @@ app = FastAPI()
 
 rooms = {}
 
+# CRUD -> Create, Read, Update, Delete = POST, GET, PUT, DELETE
+
 
 @app.post("/join")
 def join(username: str, room: str):
