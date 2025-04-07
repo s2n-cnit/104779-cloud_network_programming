@@ -72,10 +72,11 @@ class Result[Type: SQLModel](BaseModel):
         self: "Result[Type]",
         detail: str,
         data: str,
+        timestamp: datetime = datetime.now(),
         success: bool = True,
     ) -> "Result[Type]":
         super().__init__(
-            success=success, detail=detail, timestamp=datetime.now(), data=data
+            success=success, detail=detail, timestamp=timestamp, data=data
         )
 
 
