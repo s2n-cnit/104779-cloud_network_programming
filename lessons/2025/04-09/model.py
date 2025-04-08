@@ -16,7 +16,7 @@ class Role(SQLModel, table=True):
     id: str = Field(primary_key=True)
     description: str | None = None
 
-    users: List["User"] = Relationship(back_populates="role")
+    users: List["User"] = Relationship(back_populates="role", sa_relationship_kwargs={"lazy": "subquery"})
 
 
 class User(SQLModel, table=True):
@@ -33,9 +33,9 @@ class User(SQLModel, table=True):
 
     role: Role = Relationship(back_populates="users")
     rooms: list["Room"] = Relationship(
-        back_populates="users", link_model=UserRoom
+        back_populates="users", link_model=UserRoom, sa_relationship_kwargs={"lazy": "subquery"}
     )
-    messages: list["Message"] = Relationship(back_populates="user")
+    messages: list["Message"] = Relationship(back_populates="user", sa_relationship_kwargs={"lazy": "subquery"})
 
 
 class Room(SQLModel, table=True):
@@ -46,7 +46,7 @@ class Room(SQLModel, table=True):
     users: List[User] = Relationship(
         back_populates="rooms", link_model=UserRoom
     )
-    messages: List["Message"] = Relationship(back_populates="room")
+    messages: List["Message"] = Relationship(back_populates="room", sa_relationship_kwargs={"lazy": "subquery"})
 
 
 class Message(SQLModel, table=True):
@@ -58,8 +58,8 @@ class Message(SQLModel, table=True):
     sent_at: datetime
     content: str
 
-    user: User = Relationship(back_populates="messages")
-    room: Room = Relationship(back_populates="messages")
+    user: User = Relationship(back_populates="messages", sa_relationship_kwargs={"lazy": "subquery"})
+    room: Room = Relationship(back_populates="messages", sa_relationship_kwargs={"lazy": "subquery"})
 
 
 class Result[Type: SQLModel](BaseModel):

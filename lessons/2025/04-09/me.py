@@ -46,8 +46,7 @@ async def me_delete(
 async def me_messages(
     current_user: Annotated[
         User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
-    ],
-    id: str,
+    ]
 ) -> List[Message]:
     return current_user.messages
 
@@ -60,8 +59,7 @@ async def me_messages(
 async def me_rooms(
     current_user: Annotated[
         User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
-    ],
-    id: str,
+    ]
 ) -> List[Room]:
     return current_user.rooms
 

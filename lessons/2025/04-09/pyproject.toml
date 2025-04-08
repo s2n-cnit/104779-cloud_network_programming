@@ -1,0 +1,25 @@
+[project]
+name = "yacr"
+version = "0.1.0"
+description = "Yet Another Chat Room"
+authors = [
+    {name = "Alex Carrega",email = "alessandro.carrega@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.13,<4.0"
+dependencies = [
+    "fastapi (>=0.115.12,<0.116.0)",
+    "sqlmodel (>=0.0.24,<0.0.25)",
+    "jwt (>=1.3.1,<2.0.0)",
+    "bcrypt (>=4.3.0,<5.0.0)",
+    "passlib (>=1.7.4,<2.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "uvicorn (>=0.34.0,<0.35.0)"
+
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
