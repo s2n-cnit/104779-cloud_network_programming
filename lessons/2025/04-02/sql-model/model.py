@@ -67,7 +67,7 @@ class Result[Type: SQLModel](BaseModel):
     ) -> "Result[Type]":
         super().__init__(
             success=success, detail=detail, timestamp=timestamp, data=data
-        )
+        )\
 
 
 class ResultType[Type: SQLModel]:

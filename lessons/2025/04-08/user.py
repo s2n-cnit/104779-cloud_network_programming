@@ -2,22 +2,20 @@ from typing import List
 
 from app import app
 from fastapi import HTTPException, status
-from model import Message, Result, ResultType, engine
+from model import Result, ResultType, User, engine
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
-from check import check_user_joined_room
 
-@app.post("/message", tags=["Message"])
-async def create_message(message: Message) -> Result[Message]:
+
+@app.post("/user", tags=["User"])
+async def create_user(user: User) -> Result[User]:
     try:
         with Session(engine) as session:
             try:
-                check_user_joined_room(session, message.user_id,
-                                       message.room_id, raise_exception=True)
-                session.add(message)
+                session.add(user)
                 session.commit()
-                session.refresh(message)
-                return Result(detail=ResultType.CREATED, data=message)
+                session.refresh(user)
+                return Result(detail=ResultType.CREATED, data=user)
             except IntegrityError as ie:
                 raise HTTPException(
                     status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=str(ie)
@@ -28,54 +26,54 @@ async def create_message(message: Message) -> Result[Message]:
         )
 
 
-@app.get("/message", tags=["Message"])
-@app.get("/messages", tags=["Message"])
-async def read_messages() -> List[Message]:
+@app.get("/user", tags=["User"])
+@app.get("/users", tags=["User"])
+async def read_users() -> List[User]:
     try:
         with Session(engine) as session:
-            return session.exec(select(Message)).all()
+            return session.exec(select(User)).all()
     except Exception as e:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
 
-@app.get("/message/{id}", tags=["Message"])
-async def read_message(id: str) -> Message:
+@app.get("/user/{id}", tags=["User"])
+async def read_user(id: str) -> User:
     try:
         with Session(engine) as session:
-            message = session.exec(
-                select(Message).where(Message.id == id)
+            user = session.exec(
+                select(User).where(User.id == id)
             ).one_or_none()
-            if message is None:
+            if user is None:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Message with id={id} not found",
+                    detail=ResultType[User].NOT_FOUND(id),
                 )
             else:
-                return message
+                return user
     except Exception as e:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
 
-@app.delete("/message/{id}", tags=["Message"])
-async def delete_message(id: str) -> Result[Message]:
+@app.delete("/user/{id}", tags=["User"])
+async def delete_user(id: str) -> Result[User]:
     try:
         with Session(engine) as session:
-            message = session.exec(
-                select(Message).where(Message.id == id)
+            user = session.exec(
+                select(User).where(User.id == id)
             ).one_or_none()
-            if message is None:
+            if user is None:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=ResultType[Message].NOT_FOUND(id),
+                    detail=ResultType[User].NOT_FOUND(id),
                 )
             else:
-                session.delete(message)
+                session.delete(user)
                 session.commit()
-                return Result(detail=ResultType.DELETED, data=message)
+                return Result(detail=ResultType.DELETED, data=user)
     except Exception as e:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
