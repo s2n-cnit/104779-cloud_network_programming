@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from model import Role, User, engine
+from model import Role, Room, User, UserRoom, engine
 from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
@@ -69,7 +69,43 @@ def insert_user(key):
         print(f"Error: {e}")
 
 
+def insert_rooms():
+    for r in ["football", "basket", "cinema", "music"]:
+        room = Room(id=r)
+        print(room)
+        with Session(engine) as session:
+            try:
+                session.add(room)
+                session.commit()
+                session.refresh(room)
+                print(f"Room {room.id} created")
+            except IntegrityError as ie:
+                print(f"Error: {ie}")
+            except Exception as e:
+                print(f"Error: {e}")
+
+
 insert_role("admin")
 insert_role("user")
 insert_user("admin")
 insert_user("alexcarrega")
+
+insert_rooms()
+
+
+def join_room(user_id: str, room_id: str):
+    ur = UserRoom(user_id=user_id, room_id=room_id, join_at=datetime.now())
+    print()
+    with Session(engine) as session:
+        try:
+            session.add(ur)
+            session.commit()
+            session.refresh(ur)
+            print(f"User {user_id} joined to room {room_id}")
+        except IntegrityError as ie:
+            print(f"Error: {ie}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+join_room(user_id="alexcarrega", room_id="music")

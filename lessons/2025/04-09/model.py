@@ -53,9 +53,10 @@ class Message(SQLModel, table=True):
     id: int = Field(
         sa_column=Column("id", Integer, primary_key=True, autoincrement=True)
     )
-    user_id: str = Field(foreign_key="user.id")
+    user_id: str = Field(foreign_key="user.id", default=None)
     room_id: str = Field(foreign_key="room.id")
-    sent_at: datetime
+    sent_at: datetime = datetime.now()
+    updated_at: datetime | None = None
     content: str
 
     user: User = Relationship(back_populates="messages", sa_relationship_kwargs={"lazy": "subquery"})

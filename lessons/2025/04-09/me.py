@@ -10,6 +10,68 @@ from sqlmodel import Session, select
 router = APIRouter(prefix="/me", tags=["Me"])
 
 
+@router.post("/message", tags=["User"], summary="Write a new message in a chat room")
+async def me_message_create(
+    current_user: Annotated[
+        User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
+    ],
+    message: Message
+) -> Result[Message]:
+    try:
+        with Session(engine) as session:
+            try:
+                message.user_id = current_user.id
+                if message.room_id not in map(lambda r: r.id, current_user.rooms):
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail=f"User {message.user_id} not joined to room {message.room_id}"
+                    )
+                session.add(message)
+                session.commit()
+                session.refresh(message)
+                return Result("Message created", data=message)
+            except IntegrityError as ie:
+                raise HTTPException(
+                    status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=str(ie)
+                )
+    except Exception as e:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.put("/message/{message_id}", tags=["User"], summary="Write a new message in a chat room")
+async def me_message_edit(
+    current_user: Annotated[
+        User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
+    ],
+    message_id: int, message: Message
+) -> Result[Message]:
+    try:
+        with Session(engine) as session:
+            try:
+                for m in current_user.messages:
+                    if m.id == message_id:
+                        m.content = message.content
+                        m.updated_at = datetime.now()
+                        session.add(m)
+                        session.commit()
+                        session.refresh(m)
+                        return Result("Message updated", data=m)
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Message {message_id} not found"
+                )
+            except IntegrityError as ie:
+                raise HTTPException(
+                    status_code=status.HTTP_406_NOT_ACCEPTABLE, detail=str(ie)
+                )
+    except Exception as e:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
 @router.get("/", tags=["User"], summary="Get my details")
 async def me_get(
     current_user: Annotated[
@@ -95,7 +157,7 @@ async def me_join(
     ],
     room_id: str,
 ) -> Result[UserRoom]:
-    if room_id in map(current_user.rooms, lambda r: r.id):
+    if room_id in map(lambda r: r.id, current_user.rooms):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"You are already joined in room {room_id}",

@@ -32,7 +32,7 @@ def get_user(username: str):
 
 def authenticate_user(username: str, password: str):
     user = get_user(username)
-    if not user:
+    if not user:  # user is None:
         return False
     if not pwd_context.verify(password, user.password):
         return False
