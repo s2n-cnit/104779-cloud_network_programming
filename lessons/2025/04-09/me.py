@@ -165,6 +165,7 @@ async def me_join(
     try:
         with Session(engine) as session:
             try:
+                # check if the room id exists in the YACR
                 ur = UserRoom(
                     user_id=current_user.id,
                     room_id=room_id,
