@@ -1,11 +1,14 @@
-from datetime import datetime
-from typing import Self
+from datetime import datetime, timedelta, timezone
+from typing import Annotated, List, Self
 
-from fastapi import FastAPI, HTTPException, status
+import jwt
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from passlib.context import CryptContext
+from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import (Column, Field, Integer, Relationship, Session, SQLModel,
                       String, create_engine, select)
-from Typing import List
 
 # id: for integer (autoincremented) primary key
 # name: for string primary key
@@ -16,10 +19,21 @@ class Category(SQLModel, table=True):
         sa_column=Column("name", String, primary_key=True)
     )
 
+    created_by_id: str = Field(foreign_key="user.id")
+    updated_by_id: str = Field(foreign_key="user.id")
+
     commands: List["Command"] = Relationship(
         back_populates="category",
         sa_relationship_kwargs={
             "primaryjoin": "Category.name=Command.category_name",
+            "lazy": "joined",
+        },
+    )
+
+    created_by: "User" = Relationship(
+        back_populates="categories_created",
+        sa_relationship_kwargs={
+            "primaryjoin": "Category.created_by_id=User.id",
             "lazy": "joined",
         },
     )
@@ -134,12 +148,210 @@ SQLModel.metadata.create_all(engine)
 
 app = FastAPI()
 
+router = APIRouter(prefix="/auth", tags=["Auth"])
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+SECRET_KEY = "hdhfh5jdnb7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+ALGORITHM = "HS256"
+
+refresh_tokens = []
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 20
+REFRESH_TOKEN_EXPIRE_MINUTES = 120
+
+
+class Role(SQLModel, table=True):
+    id: str = Field(primary_key=True)
+    description: str
+
+    users: List["User"] = Relationship(
+        back_populates="role",
+        sa_relationship_kwargs={
+            "primaryjoin": "Role.id=User.ids",
+            "lazy": "joined",
+        },
+    )
+
+
+class User(SQLModel, table=True):
+    id: str = Field(primary_key=True)
+    password: str
+    role_id: str = Field(foreign_key="role.id")
+    disabled: bool = Field(default=False)
+
+    role: Role = Relationship(
+        back_populates="users",
+        sa_relationship_kwargs={
+            "primaryjoin": "Role.id=User.id",
+            "lazy": "joined",
+        },
+    )
+
+    categories_created: Category = Relationship(
+        back_populates="created_by",
+        sa_relationship_kwargs={
+            "primaryjoin": "Category.created_by_id=User.id",
+            "lazy": "joined",
+        },
+    )
+
+
+class Token(SQLModel):  # BaseModel is similar in this case because we don't save in DB.
+    access_token: str | None = None
+    refresh_token: str | None = None
+
+
+def get_user(username: str):
+    with Session(engine) as session:
+        return session.get(User, username)
+
+
+def authenticate_user(username: str, password: str):
+    user = get_user(username)
+    if not user:
+        return False
+    if not pwd_context.verify(password, user.password):
+        return False
+    return user
+
+
+def create_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except jwt.DecodeError:
+        raise credentials_exception
+    except jwt.ExpiredSignatureError:
+        raise credentials_exception
+    user = get_user(username)
+    if user is None:
+        raise credentials_exception
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+async def validate_refresh_token(
+    token: Annotated[str, Depends(oauth2_scheme)]
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+    )
+    try:
+        if token in refresh_tokens:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            username: str = payload.get("sub")
+            role: str = payload.get("role")
+            if username is None or role is None:
+                raise credentials_exception
+        else:
+            raise credentials_exception
+    except (jwt.DecodeError, ValidationError):
+        raise credentials_exception
+    user = get_user(username)
+    if user is None:
+        raise credentials_exception
+    return user, token
+
+
+class RoleChecker:
+    def __init__(
+        self: "RoleChecker", allowed_role_ids: List[str]
+    ) -> "RoleChecker":
+        self.allowed_role_ids = allowed_role_ids
+
+    def __call__(
+        self: "RoleChecker",
+        user: Annotated[User, Depends(get_current_active_user)],
+    ) -> User:
+        if user.role_id in self.allowed_role_ids:
+            return user
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You don't have enough permissions",
+        )
+
+
+@router.post("/token")
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+) -> Token:
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expires = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
+
+    access_token = create_token(
+        data={"sub": user.id, "role": user.role_id},
+        expires_delta=access_token_expires,
+    )
+    refresh_token = create_token(
+        data={"sub": user.id, "role": user.role_id},
+        expires_delta=refresh_token_expires,
+    )
+    refresh_tokens.append(refresh_token)
+    return Token(access_token=access_token, refresh_token=refresh_token)
+
+
+@router.post("/refresh")
+async def refresh_access_token(
+    token_data: Annotated[tuple[User, str], Depends(validate_refresh_token)]
+):
+    user, token = token_data
+    access_token = create_token(
+        data={"sub": user.id, "role": user.role_id},
+        expires_delta=ACCESS_TOKEN_EXPIRE_MINUTES,
+    )
+    refresh_token = create_token(
+        data={"sub": user.id, "role": user.role_di},
+        expires_delta=ACCESS_TOKEN_EXPIRE_MINUTES,
+    )
+
+    refresh_tokens.remove(token)
+    refresh_tokens.append(refresh_token)
+    return Token(access_token=access_token, refresh_token=refresh_token)
+
 
 @app.post("/category")
-async def create_category(category: Category) -> Result:
+async def create_category(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
+        ], category: Category) -> Result:
     try:
         with Session(engine) as session:
             try:
+                category.created_by_id = current_user.id
                 session.add(category)
                 session.commit()
                 session.refresh(category)
@@ -155,7 +367,21 @@ async def create_category(category: Category) -> Result:
 
 
 @app.get("/category")
-async def get_category_list() -> List[Category]:
+async def get_category_list(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
+        ]) -> List[Category]:
+    try:
+        return current_user.categories_created
+    except Exception as e:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@app.get("/admin/category")
+async def get_category_list_admin(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin"]))
+        ]) -> List[Category]:
     try:
         with Session(engine) as session:
             return session.exec(select(Category)).all()
@@ -165,8 +391,10 @@ async def get_category_list() -> List[Category]:
         )
 
 
-@app.get("/category/{category_name}")
-async def get_category_single(category_name: str) -> Category:
+@app.get("/admin/category/{category_name}")
+async def get_category_single_admin(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin"]))
+        ], category_name: str) -> Category:
     try:
         with Session(engine) as session:
             category = session.exec(select(Category).where(Category.name == category_name)).one_or_none()
@@ -180,10 +408,28 @@ async def get_category_single(category_name: str) -> Category:
         )
 
 
-@app.delete("/category/{category_name}")
-async def delete_category(category_name: str) -> Result:
+@app.get("/category/{category_name}")
+async def get_category_single(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
+        ], category_name: str) -> Category:
     try:
-        category = get_command_single(category_name)
+        for cat in current_user.categories_created:
+            if cat.name == category_name:
+                return cat
+        raise HTTPException(status.HTTP_404_NOT_FOUND,
+                            detail=f"Category {category_name} not found")
+    except Exception as e:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@app.delete("/category/{category_name}")
+async def delete_category(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
+        ], category_name: str) -> Result:
+    try:
+        category = get_category_single(category_name)
         if len(category.commands) > 0:
             raise HTTPException(
                 status.HTTP_406_NOT_ACCEPTABLE, detail=f"Category {category.name} not empty"
@@ -204,22 +450,68 @@ async def delete_category(category_name: str) -> Result:
         )
 
 
-@app.put("/category/{category_name}")
-async def update_category(category_name: str, category: Category) -> Result:
+@app.delete("/admin/category/{category_name}")
+async def delete_category_admin(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin"]))
+        ], category_name: str) -> Result:
     try:
-        stored_category = get_category_single(category_name)
+        category = get_category_single_admin(category_name)
+        if len(category.commands) > 0:
+            raise HTTPException(
+                status.HTTP_406_NOT_ACCEPTABLE, detail=f"Category {category.name} not empty"
+            )
         with Session(engine) as session:
             try:
-                stored_category.name = category.name
-                session.add(stored_category)
+                session.delete(category)
                 session.commit()
-                session.refresh(stored_category)
-                return Result(error=False,
-                              detail=f"Category {category_name} updated")
+                session.refresh(category)
+                return Result(error=False, detail=f"Category {category_name} deleted")
             except IntegrityError as ie:
                 raise HTTPException(
                     status.HTTP_406_NOT_ACCEPTABLE, detail=str(ie)
                 )
+    except Exception as e:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+def __update_category(stored_category: Category, category: Category, current_user: User) -> Result:
+    with Session(engine) as session:
+        try:
+            stored_category.name = category.name
+            stored_category.updated_by_id = current_user.id
+            session.add(stored_category)
+            session.commit()
+            session.refresh(stored_category)
+            return Result(error=False,
+                          detail=f"Category {category.name} updated")
+        except IntegrityError as ie:
+            raise HTTPException(
+                status.HTTP_406_NOT_ACCEPTABLE, detail=str(ie)
+            )
+
+
+@app.put("/category/{category_name}")
+async def update_category(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin", "user"]))
+        ], category_name: str, category: Category) -> Result:
+    try:
+        stored_category = get_category_single(category_name)
+        return __update_category(stored_category, category, current_user)
+    except Exception as e:
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@app.put("/admin/category/{category_name}")
+async def update_category_admin(current_user: Annotated[
+            User, Depends(RoleChecker(allowed_role_ids=["admin"]))
+        ], category_name: str, category: Category) -> Result:
+    try:
+        stored_category = get_category_single_admin(category_name)
+        return __update_category(stored_category, category, current_user)
     except Exception as e:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
