@@ -16,7 +16,12 @@
  10. [09th April 2025](lessons/2025/04-09)
  11. [15th April 2025](lessons/2025/04-15)
  12. [22nd April 2025](lessons/2025/04-22)
- 13. [23rd April 2025](lessons/2025/04-23)
+ 13. [29th April 2025](lessons/2025/04-29)
+
+## Exams
+
+1. [16th May 2025](exams/2025/05-16)
+2. [25th June 2025](exams/2025/06-25)
 
 ## Extra
 
