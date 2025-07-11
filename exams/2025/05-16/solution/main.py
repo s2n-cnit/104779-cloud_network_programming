@@ -1,4 +1,4 @@
-#!/usr/bin/env -S poetry -C /axc-mgmt/teaching/cloud_network_programming/exams/2025/05-16/solution run python
+#!/usr/bin/env -S poetry -C /axc-mgmt/github/teaching/104779-cloud_net_prog/exams/2025/05-16/solution run python
 
 import uvicorn
 from config import host, port
