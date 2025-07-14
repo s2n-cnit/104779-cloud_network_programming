@@ -200,6 +200,17 @@ class TestHistory(TestBase):
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_404(resp, TARGET_TEAM)
 
+    @pytest.mark.order(ORDER.create)
+    def test_create_integrity_violation(self: Self, username: str,
+                                        auth_header: str) -> None:
+        d = DATA.copy()
+        team_id = self.get_id(username, REF_TEAM)
+        player_id = self.get_id(username, REF_PLAYER)
+        d.update(player_id=player_id, team_id=team_id)
+        d.update(**ADD_FIELD)
+        resp = _c(_j(), headers=auth_header, json=d)
+        self.is_status_406(resp)
+
     @pytest.mark.order(ORDER.read)
     def test_read(self: Self, username: str, auth_header: str) -> None:
         _id = self.get_id(username, REF, string=True)

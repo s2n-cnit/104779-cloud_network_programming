@@ -12,8 +12,8 @@ from forbiddenfruit import curse
 
 
 def datetime_check(value):
-    # if not isinstance(value, datetime):
-    #     return datetime.fromisoformat(value)
+    if not isinstance(value, datetime):
+        return datetime.fromisoformat(value)
     return value
 
 

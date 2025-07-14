@@ -5,7 +5,7 @@ from config import db_path, echo_engine
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlmodel import (Field, Relationship, SQLModel,
-                      create_engine)
+                      create_engine, UniqueConstraint)
 from utils import datetime_check
 
 
@@ -28,13 +28,13 @@ class BasePublic(SQLModel):
 class HistoryCreate(SQLModel):
     player_id: int = Field(foreign_key="player.id")
     team_id: int = Field(foreign_key="team.id")
-    start_date: Annotated[str, BeforeValidator(datetime_check)]
-    end_date: Annotated[str, BeforeValidator(datetime_check)]
+    start_date: Annotated[datetime, BeforeValidator(datetime_check)]
+    end_date: Annotated[datetime, BeforeValidator(datetime_check)]
 
 
 class HistoryUpdate(SQLModel):
-    start_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
-    end_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
+    start_date: Optional[Annotated[datetime, BeforeValidator(datetime_check)]] = None
+    end_date: Optional[Annotated[datetime, BeforeValidator(datetime_check)]] = None
 
 
 class HistoryPublic(HistoryCreate, BasePublic):
@@ -45,6 +45,14 @@ class HistoryPublic(HistoryCreate, BasePublic):
 
 class History(HistoryPublic, table=True):
     __tablename__ = "history"
+    __table_args__ = (
+        UniqueConstraint(
+            "team_id",
+            "player_id",
+            "start_date",
+            "end_date"
+        ),
+    )
     team: "Team" = Relationship(
         back_populates="history",
         sa_relationship_kwargs={
@@ -80,13 +88,13 @@ class History(HistoryPublic, table=True):
 
 class PlayerCreate(SQLModel):
     name: str
-    birth_date: Annotated[str, BeforeValidator(datetime_check)]
+    birth_date: Annotated[datetime, BeforeValidator(datetime_check)]
     player_role_id: int = Field(foreign_key="player_role.id")
 
 
 class PlayerUpdate(SQLModel):
     name: Optional[str] = None
-    birth_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
+    birth_date: Optional[Annotated[datetime, BeforeValidator(datetime_check)]] = None
     player_role_id: Optional[int] = Field(default=None, foreign_key="player_role.id")
 
 
