@@ -32,53 +32,51 @@ def _j(*args, sep="/") -> str:
     return sep.join(args)
 
 
-_birth_date = datetime(2000, 7, 10, 10, 30, 00).isoformat()
-UPDATE_PLAYER = ImmutableDict(name="new-player-name", birth_date=_birth_date)
-UPDATE_PLAYER_ROLE = ImmutableDict(name="new-player-role-name")
-UPDATE_TEAM = ImmutableDict(name="new-team-name", year_foundation=1950, city="Milan")
+UPDATE_CITY = ImmutableDict(name="new-city-name", latitude=11.3, longitude=31.5)
+UPDATE_COUNTRY = ImmutableDict(name="new-country-name")
+UPDATE_REPORT = ImmutableDict(name="new-report-name", unit="new-unit", description="new-description")
 _start_date = datetime(2020, 9, 20, 10, 30, 00).isoformat()
 _end_date = datetime(2022, 7, 1, 10, 30, 00).isoformat()
-UPDATE_HISTORY = ImmutableDict(start_date=_start_date, end_date=_end_date)
+UPDATE_REPORT_HISTORY = ImmutableDict(start_date=_start_date, end_date=_end_date, measure=40.3)
 
-DATA_PLAYER_ROLE = ImmutableDict(name="player-role-name")
-_birth_date = datetime(2001, 7, 10, 10, 30, 00).isoformat()
-DATA_PLAYER = ImmutableDict(name="player-name", birth_date=_birth_date)
-DATA_TEAM = ImmutableDict(name="team-name", year_foundation=1955, city="Genoa")
+DATA_COUNTRY = ImmutableDict(name="country-name")
+DATA_CITY = ImmutableDict(name="city-name", latitude=10.3, longitude=34.5)
+DATA_REPORT = ImmutableDict(name="report-name", unit="report-unit", description="report-description")
 _start_date = datetime(2021, 9, 21, 10, 30, 00).isoformat()
 _end_date = datetime(2023, 7, 10, 10, 30, 00).isoformat()
-DATA_HISTORY = ImmutableDict(start_date=_start_date, end_date=_end_date)
+DATA_REPORT_HISTORY = ImmutableDict(start_date=_start_date, end_date=_end_date, measure=10.3)
 
-ORDER_PLAYER_ROLE = Struct(create=1, read=2, update=3, delete=88, delete_check=100)
-ORDER_PLAYER = Struct(create=11, read=12, update=13, delete=89, delete_check=95)
-ORDER_TEAM = Struct(
+ORDER_COUNTRY = Struct(create=1, read=2, update=3, delete=88, delete_check=100)
+ORDER_CITY = Struct(create=11, read=12, update=13, delete=89, delete_check=95)
+ORDER_REPORT = Struct(
     create=21, read=22, update=23, delete=89, delete_check=95
 )
-ORDER_HISTORY = Struct(create=31, read=32, update=33, delete=90)
+ORDER_REPORT_HISTORY = Struct(create=31, read=32, update=33, delete=90)
 
-FIELD_PLAYER = "name"
-FIELD_PLAYER_ROLE = "name"
-FIELD_TEAM = "name"
-FIELD_HISTORY = "start_date"
+FIELD_COUNTRY = "name"
+FIELD_CITY = "name"
+FIELD_REPORT = "unit"
+FIELD_REPORT_HISTORY = "start_date"
 
-RENAME_PLAYER = ImmutableDict(name="names")
-RENAME_PLAYER_ROLE = ImmutableDict(name="names")
-RENAME_TEAM = ImmutableDict(name="names")
-RENAME_HISTORY = ImmutableDict(start_date="start_dates")
+RENAME_COUNTRY = ImmutableDict(name="names")
+RENAME_CITY = ImmutableDict(name="names")
+RENAME_REPORT = ImmutableDict(unit="units")
+RENAME_REPORT_HISTORY = ImmutableDict(start_date="start_dates")
 
-LABEL_PLAYER_ROLE = "player-role"
-LABEL_PLAYER = "player"
-LABEL_TEAM = "team"
-LABEL_HISTORY = "history"
+LABEL_COUNTRY = "country"
+LABEL_CITY = "city"
+LABEL_REPORT = "report"
+LABEL_REPORT_HISTORY = "report-history"
 
-TARGET_PLAYER_ROLE = "Player Role"
-TARGET_PLAYER = "Player"
-TARGET_TEAM = "Team"
-TARGET_HISTORY = "History"
+TARGET_COUNTRY = "Country"
+TARGET_CITY = "City"
+TARGET_REPORT = "Report"
+TARGET_REPORT_HISTORY = "Report History"
 
-REF_PLAYER = "player"
-REF_PLAYER_ROLE = "player-role"
-REF_TEAM = "team"
-REF_HISTORY = "history"
+REF_COUNTRY = "country"
+REF_CITY = "city"
+REF_REPORT = "report"
+REF_REPORT_HISTORY = "report-history"
 
 
 class TestBase:

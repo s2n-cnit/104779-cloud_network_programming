@@ -22,152 +22,163 @@ class BasePublic(SQLModel):
     updated_by_id: Optional[str] = Field(foreign_key="user.id")
 
 
-# History
+# ReportHistory
 
 
-class HistoryCreate(SQLModel):
-    player_id: int = Field(foreign_key="player.id")
-    team_id: int = Field(foreign_key="team.id")
-    start_date: Annotated[str, BeforeValidator(datetime_check)]
-    end_date: Annotated[str, BeforeValidator(datetime_check)]
+class ReportHistoryCreate(SQLModel):
+    city_id: int = Field(foreign_key="city.id")
+    report_id: int = Field(foreign_key="report.id")
+    start_date:Annotated[datetime, BeforeValidator(datetime_check)]
+    end_date:Annotated[datetime, BeforeValidator(datetime_check)]
+    measure: float
 
-
-class HistoryUpdate(SQLModel):
+class ReportHistoryUpdate(SQLModel):
     start_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
     end_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
+    measure: Optional[int] = None
 
-
-class HistoryPublic(HistoryCreate, BasePublic):
+class ReportHistoryPublic(ReportHistoryCreate, BasePublic):
     id: int = Field(
         sa_column=Column("id", Integer, primary_key=True, autoincrement=True)
     )
 
 
-class History(HistoryPublic, table=True):
-    __tablename__ = "history"
-    team: "Team" = Relationship(
-        back_populates="history",
+class ReportHistory(ReportHistoryPublic, table=True):
+    __tablename__ = "report_history"
+    __table_args__ = (
+        UniqueConstraint(
+            "report_id",
+            "city_id",
+            "start_date",
+            "end_date",
+            "measure"
+        ),
+    )
+    report: "Report" = Relationship(
+        back_populates="report_history",
         sa_relationship_kwargs={
-            "primaryjoin": "History.team_id==Team.id",
+            "primaryjoin": "ReportHistory.report_id==Report.id",
             "lazy": "selectin",
         },
     )
-    player: "Player" = Relationship(
-        back_populates="history",
+    city: "City" = Relationship(
+        back_populates="report_history",
         sa_relationship_kwargs={
-            "primaryjoin": "History.player_id==Player.id",  # noqa: E501
+            "primaryjoin": "ReportHistory.city_id==City.id",  # noqa: E501
             "lazy": "selectin",
         },
     )
     created_by: "User" = Relationship(
-        back_populates="history_created",
+        back_populates="report_history_created",
         sa_relationship_kwargs={
-            "primaryjoin": "History.created_by_id==User.id",
+            "primaryjoin": "ReportHistory.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
     updated_by: "User" = Relationship(
-        back_populates="history_updated",
+        back_populates="report_history_updated",
         sa_relationship_kwargs={
-            "primaryjoin": "History.updated_by_id==User.id",
+            "primaryjoin": "ReportHistory.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )
 
 
-# Player
+# City
 
 
-class PlayerCreate(SQLModel):
+class CityCreate(SQLModel):
     name: str
-    birth_date: Annotated[str, BeforeValidator(datetime_check)]
-    player_role_id: int = Field(foreign_key="player_role.id")
+    latitude: float
+    longitude: float
+    country_id: int = Field(foreign_key="country.id")
 
 
-class PlayerUpdate(SQLModel):
+class CityUpdate(SQLModel):
     name: Optional[str] = None
-    birth_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
-    player_role_id: Optional[int] = Field(default=None, foreign_key="player_role.id")
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    country_id: Optional[int] = Field(default=None, foreign_key="country.id")
 
 
-class PlayerPublic(PlayerCreate, BasePublic):
+class CityPublic(CityCreate, BasePublic):
     id: int = Field(
         sa_column=Column("id", Integer, primary_key=True, autoincrement=True)
     )
 
 
-class Player(PlayerPublic, table=True):
-    player_role: "PlayerRole" = Relationship(
-        back_populates="players",
+class City(CityPublic, table=True):
+    country: "Country" = Relationship(
+        back_populates="citys",
         sa_relationship_kwargs={
-            "primaryjoin": "Player.player_role_id==PlayerRole.id",
+            "primaryjoin": "City.country==Country.id",
             "lazy": "selectin",
         },
     )
-    history: List["History"] = Relationship(
-        back_populates="player",
+    report_history: List["ReportHistory"] = Relationship(
+        back_populates="city",
         sa_relationship_kwargs={
-            "primaryjoin": "History.player_id==Player.id",
+            "primaryjoin": "ReportHistory.city_id==City.id",
             "lazy": "selectin",
         },
     )
     created_by: "User" = Relationship(
-        back_populates="players_created",
+        back_populates="citys_created",
         sa_relationship_kwargs={
-            "primaryjoin": "Player.created_by_id==User.id",
+            "primaryjoin": "City.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
     updated_by: "User" = Relationship(
-        back_populates="players_updated",
+        back_populates="citys_updated",
         sa_relationship_kwargs={
-            "primaryjoin": "Player.updated_by_id==User.id",
+            "primaryjoin": "City.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )
 
 
-# Team
+# Report
 
 
-class TeamCreate(SQLModel):
+class ReportCreate(SQLModel):
     name: str
-    year_foundation: int
-    city: str
+    description: str
+    unit: sr
 
 
-class TeamUpdate(TeamCreate):
+class ReportUpdate(ReportCreate):
     name: Optional[str] = None
-    year_foundation: Optional[int] = None
-    city: Optional[str] = None
+    description: Optional[str] = None
+    unit: Optional[str] = None
 
 
-class TeamPublic(TeamCreate, BasePublic):
+class ReportPublic(ReportCreate, BasePublic):
     id: int = Field(
         sa_column=Column("id", Integer, primary_key=True, autoincrement=True)
     )
 
 
-class Team(TeamPublic, table=True):
-    __tablename__ = "team"
-    history: List["History"] = Relationship(
-        back_populates="team",
+class Report(ReportPublic, table=True):
+    __tablename__ = "report"
+    report_history: List["ReportHistory"] = Relationship(
+        back_populates="report",
         sa_relationship_kwargs={
-            "primaryjoin": "History.team_id==Team.id",  # noqa: E501
+            "primaryjoin": "ReportHistory.report_id==Report.id",  # noqa: E501
             "lazy": "selectin",
         },
     )
     created_by: "User" = Relationship(
-        back_populates="teams_created",
+        back_populates="reports_created",
         sa_relationship_kwargs={
-            "primaryjoin": "Team.created_by_id==User.id",
+            "primaryjoin": "Report.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
     updated_by: "User" = Relationship(
-        back_populates="teams_updated",
+        back_populates="reports_updated",
         sa_relationship_kwargs={
-            "primaryjoin": "Team.updated_by_id==User.id",
+            "primaryjoin": "Report.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )
@@ -233,102 +244,102 @@ class UserPublic(BasePublic):
 
 
 class User(UserCreate, BasePublic, table=True):
-    players_created: List["Player"] = Relationship(
+    citys_created: List["City"] = Relationship(
         back_populates="created_by",
         sa_relationship_kwargs={
-            "primaryjoin": "Player.created_by_id==User.id",
+            "primaryjoin": "City.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
-    teams_created: List["Team"] = Relationship(
+    reports_created: List["Report"] = Relationship(
         back_populates="created_by",
         sa_relationship_kwargs={
-            "primaryjoin": "Team.created_by_id==User.id",
+            "primaryjoin": "Report.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
-    history_created: List["History"] = Relationship(
+    report_history_created: List["ReportHistory"] = Relationship(
         back_populates="created_by",
         sa_relationship_kwargs={
-            "primaryjoin": "History.created_by_id==User.id",
+            "primaryjoin": "ReportHistory.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
-    player_roles_created: List["PlayerRole"] = Relationship(
+    countries_created: List["Country"] = Relationship(
         back_populates="created_by",
         sa_relationship_kwargs={
-            "primaryjoin": "PlayerRole.created_by_id==User.id",
+            "primaryjoin": "Country.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
 
-    players_updated: List["Player"] = Relationship(
+    countries_updated: List["City"] = Relationship(
         back_populates="updated_by",
         sa_relationship_kwargs={
-            "primaryjoin": "Player.updated_by_id==User.id",
+            "primaryjoin": "City.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )
-    teams_updated: List["Team"] = Relationship(
+    reports_updated: List["Report"] = Relationship(
         back_populates="updated_by",
         sa_relationship_kwargs={
-            "primaryjoin": "Team.updated_by_id==User.id",
+            "primaryjoin": "Report.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )
-    history_updated: List["History"] = Relationship(
+    report_history_updated: List["ReportHistory"] = Relationship(
         back_populates="updated_by",
         sa_relationship_kwargs={
-            "primaryjoin": "History.updated_by_id==User.id",
+            "primaryjoin": "ReportHistory.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )
-    player_roles_updated: List["PlayerRole"] = Relationship(
+    countries_updated: List["Country"] = Relationship(
         back_populates="updated_by",
         sa_relationship_kwargs={
-            "primaryjoin": "PlayerRole.updated_by_id==User.id",
+            "primaryjoin": "Country.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )
 
 
-# PlayerRole
+# Country
 
 
-class PlayerRoleCreate(SQLModel):
+class CountryCreate(SQLModel):
     name: str
 
 
-class PlayerRoleUpdate(SQLModel):
+class CountryUpdate(SQLModel):
     name: Optional[str] = None
 
 
-class PlayerRolePublic(PlayerRoleCreate, BasePublic):
+class CountryPublic(CountryCreate, BasePublic):
     id: int = Field(
         sa_column=Column("id", Integer, primary_key=True, autoincrement=True)
     )
 
 
-class PlayerRole(PlayerRolePublic, table=True):
-    __tablename__ = "player_role"
-    players: List[Player] = Relationship(
-        back_populates="player_role",
+class Country(CountryPublic, table=True):
+    __tablename__ = "country"
+    citys: List[City] = Relationship(
+        back_populates="country",
         sa_relationship_kwargs={
-            "primaryjoin": "Player.player_role_id==PlayerRole.id",
+            "primaryjoin": "City.country_id==Country.id",
             "lazy": "selectin",
         },
     )
     created_by: "User" = Relationship(
-        back_populates="player_roles_created",
+        back_populates="countries_created",
         sa_relationship_kwargs={
-            "primaryjoin": "PlayerRole.created_by_id==User.id",
+            "primaryjoin": "Country.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
     updated_by: "User" = Relationship(
-        back_populates="player_roles_updated",
+        back_populates="countries_updated",
         sa_relationship_kwargs={
-            "primaryjoin": "PlayerRole.updated_by_id==User.id",
+            "primaryjoin": "Country.updated_by_id==User.id",
             "lazy": "selectin",
         },
     )

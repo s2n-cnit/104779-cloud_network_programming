@@ -13,15 +13,11 @@ BasicUser = Annotated[
 
 def prefix(
     id: bool = False,
-    me: bool = False,
-    add_ex: bool = False,
-    rm_ex: bool = False,
+    me: bool = False
 ):
     return (
         ("/{id}" if id else "")
         + ("/me" if me else "")
-        + ("/add" if add_ex else "")
-        + ("/rm/{exercise_id}" if rm_ex else "")
     )
 
 

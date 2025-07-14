@@ -2,19 +2,19 @@
 
 from functools import partial
 from test.lib import ADD_FIELD
-from test.lib import DATA_HISTORY as DATA
-from test.lib import FIELD_HISTORY as FIELD
+from test.lib import DATA_REPORT_HISTORY as DATA
+from test.lib import FIELD_REPORT_HISTORY as FIELD
 from test.lib import ID_NOT_FOUND
-from test.lib import LABEL_HISTORY as LABEL
-from test.lib import ORDER_HISTORY as ORDER
-from test.lib import REF_PLAYER
-from test.lib import REF_HISTORY as REF
-from test.lib import REF_TEAM
-from test.lib import RENAME_HISTORY as RENAME
-from test.lib import TARGET_PLAYER
-from test.lib import TARGET_HISTORY as TARGET
-from test.lib import TARGET_TEAM
-from test.lib import UPDATE_HISTORY as UPDATE
+from test.lib import LABEL_REPORT_HISTORY as LABEL
+from test.lib import ORDER_REPORT_HISTORY as ORDER
+from test.lib import REF_CITY
+from test.lib import REF_REPORT_HISTORY as REF
+from test.lib import REF_REPORT
+from test.lib import RENAME_REPORT_HISTORY as RENAME
+from test.lib import TARGET_CITY
+from test.lib import TARGET_REPORT_HISTORY as TARGET
+from test.lib import TARGET_REPORT
+from test.lib import UPDATE_REPORT_HISTORY as UPDATE
 from test.lib import TestBase, _c, _d
 from test.lib import _j as tmp_j
 from test.lib import _r, _u, get_properties
@@ -22,7 +22,7 @@ from typing import Self
 
 import pytest
 from db import Action
-from model import HistoryPublic
+from model import ReportHistoryPublic
 
 _j = partial(tmp_j, LABEL)
 
@@ -30,13 +30,13 @@ _j = partial(tmp_j, LABEL)
 @pytest.mark.parametrize(
     "username,password", [("admin", "admin"), ("alexcarrega", "test-me")]
 )
-class TestHistory(TestBase):
+class TestReportHistory(TestBase):
     @pytest.mark.order(ORDER.create)
     def test_create(self: Self, username: str, auth_header: str) -> None:
         d = DATA.copy()
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_REPORT)
+        city_id = self.get_id(username, REF_CITY)
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_200(resp, Action.CREATED)
         self.save_id(username, REF, resp)
@@ -46,9 +46,9 @@ class TestHistory(TestBase):
                                 auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_REPORT)
+        city_id = self.get_id(username, REF_CITY)
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
@@ -57,9 +57,9 @@ class TestHistory(TestBase):
                                auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_REPORT)
+        city_id = self.get_id(username, REF_CITY)
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
@@ -67,138 +67,138 @@ class TestHistory(TestBase):
     def test_create_add_field(self: Self, username: str,
                               auth_header: str) -> None:
         d = DATA.copy()
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = self.get_id(username, REF_PLAYER, nth=1)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_REPORT)
+        city_id = self.get_id(username, REF_CITY, nth=1)
+        d.update(report_id=report_id, city_id=city_id)
         d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_200(resp, Action.CREATED)
         self.save_id(username, REF, resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team(self: Self, username: str,
+    def test_create_404report(self: Self, username: str,
                             auth_header: str) -> None:
         d = DATA.copy()
-        team_id = ID_NOT_FOUND
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = self.get_id(username, REF_CITY)
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_TEAM)
+        self.is_status_404(resp, TARGET_REPORT)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team_wrong_field(self: Self, username: str,
+    def test_create_404report_wrong_field(self: Self, username: str,
                                         auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
-        team_id = ID_NOT_FOUND
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = self.get_id(username, REF_CITY)
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team_miss_field(self: Self, username: str,
+    def test_create_404report_miss_field(self: Self, username: str,
                                        auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
-        team_id = ID_NOT_FOUND
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = self.get_id(username, REF_CITY)
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team_404player_add_field(self: Self, username: str,
+    def test_create_404report_404city_add_field(self: Self, username: str,
                                                 auth_header: str) -> None:
         d = DATA.copy()
-        team_id = ID_NOT_FOUND
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = self.get_id(username, REF_CITY)
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_TEAM)
+        self.is_status_404(resp, TARGET_REPORT)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404player(self: Self, username: str, auth_header: str) -> None:
+    def test_create_404city(self: Self, username: str, auth_header: str) -> None:
         d = DATA.copy()
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_report)
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_PLAYER)
+        self.is_status_404(resp, TARGET_city)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404player_wrong_field(self: Self, username: str,
+    def test_create_404city_wrong_field(self: Self, username: str,
                                           auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_report)
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404player_miss_field(self: Self, username: str,
+    def test_create_404city_miss_field(self: Self, username: str,
                                      auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_report)
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404player_add_field(self: Self, username: str,
+    def test_create_404city_add_field(self: Self, username: str,
                                     auth_header: str) -> None:
         d = DATA.copy()
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = self.get_id(username, REF_report)
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_PLAYER)
+        self.is_status_404(resp, TARGET_city)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team_404player(self: Self, username: str,
+    def test_create_404report_404city(self: Self, username: str,
                                       auth_header: str) -> None:
         d = DATA.copy()
-        team_id = ID_NOT_FOUND
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_TEAM)
+        self.is_status_404(resp, TARGET_report)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team_404player_wrong_field(self: Self, username: str,
+    def test_create_404report_404city_wrong_field(self: Self, username: str,
                                                   auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
-        team_id = ID_NOT_FOUND
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team_404player_miss_field(self: Self, username: str,
+    def test_create_404report_404city_miss_field(self: Self, username: str,
                                                  auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
-        team_id = ID_NOT_FOUND
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404team_404player_add_field(self: Self, username: str,
+    def test_create_404report_404city_add_field(self: Self, username: str,
                                                 auth_header: str) -> None:
         d = DATA.copy()
-        team_id = ID_NOT_FOUND
-        player_id = ID_NOT_FOUND
-        d.update(team_id=team_id, player_id=player_id)
+        report_id = ID_NOT_FOUND
+        city_id = ID_NOT_FOUND
+        d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_TEAM)
+        self.is_status_404(resp, TARGET_report)
 
     @pytest.mark.order(ORDER.read)
     def test_read(self: Self, username: str, auth_header: str) -> None:
@@ -207,7 +207,7 @@ class TestHistory(TestBase):
         self.is_status_200(resp)
         json = resp.json()
         assert type(json) is dict, json
-        for field in get_properties(HistoryPublic):
+        for field in get_properties(ReportHistoryPublic):
             assert field in json, (json, field)
 
     @pytest.mark.order(ORDER.read)
@@ -217,7 +217,7 @@ class TestHistory(TestBase):
         json = resp.json()
         assert type(json) is list, json
         assert len(json) > 0, json
-        for field in get_properties(HistoryPublic):
+        for field in get_properties(ReportHistoryPublic):
             assert field in json[0], (json, field)
 
     @pytest.mark.order(ORDER.read)

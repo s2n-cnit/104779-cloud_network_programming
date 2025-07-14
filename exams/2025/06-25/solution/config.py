@@ -3,7 +3,7 @@ import logging
 host = "0.0.0.0"
 port = 9998
 
-app_name = "fa"
+app_name = "wr"
 db_path = f"{app_name}.db"
 debug = True
 echo_engine = False
