@@ -43,7 +43,7 @@ class TestPlayer(TestBase):
         d.rename(**RENAME)
         d.update(player_role_id=self.get_id(username, REF_PLAYER_ROLE))
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_406(resp)
+        self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_miss_field(self: Self, username: str,
@@ -52,7 +52,7 @@ class TestPlayer(TestBase):
         d.pop(FIELD)
         d.update(player_role_id=self.get_id(username, REF_PLAYER_ROLE))
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_406(resp)
+        self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_add_field(self: Self, username: str,
@@ -79,7 +79,7 @@ class TestPlayer(TestBase):
         d.rename(**RENAME)
         d.update(player_role_id=ID_NOT_FOUND)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_PLAYER_ROLE)
+        self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_404pr_miss_field(self: Self, username: str,
@@ -88,7 +88,7 @@ class TestPlayer(TestBase):
         d.pop(FIELD)
         d.update(player_role_id=ID_NOT_FOUND)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_PLAYER_ROLE)
+        self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_404pr_add_field(self: Self, username: str,

@@ -63,8 +63,7 @@ FIELD_HISTORY = "start_date"
 RENAME_PLAYER = ImmutableDict(name="names")
 RENAME_PLAYER_ROLE = ImmutableDict(name="names")
 RENAME_TEAM = ImmutableDict(name="names")
-_start_date = datetime(2021, 9, 21, 10, 32, 00).isoformat()
-RENAME_HISTORY = ImmutableDict(start_date=_start_date)
+RENAME_HISTORY = ImmutableDict(start_date="start_dates")
 
 LABEL_PLAYER_ROLE = "player-role"
 LABEL_PLAYER = "player"

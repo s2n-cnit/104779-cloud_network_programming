@@ -4,7 +4,7 @@ from typing import List
 from db import DB
 from error import NotEmptyException
 from fastapi import APIRouter
-from model import PlayerRole, Result
+from model import PlayerRole, PlayerRoleCreate, PlayerRolePublic, PlayerRoleUpdate, Result
 from router.lib import BasicUser, prefix
 
 LABEL = "Player Role"
@@ -22,22 +22,22 @@ class _s(str, Enum):
 
 
 @router.post(prefix(), tags=_t, summary=_s.CREATE)
-async def create(user: BasicUser, pr: PlayerRole) -> Result:
+async def create(user: BasicUser, pr: PlayerRoleCreate) -> Result:
     return _pr.create(pr, user)
 
 
 @router.get(prefix(), tags=_t, summary=_s.READ_ALL)
-async def read_all(user: BasicUser) -> List[PlayerRole]:
+async def read_all(user: BasicUser) -> List[PlayerRolePublic]:
     return _pr.read_all()
 
 
 @router.get(prefix(id=True), tags=_t, summary=_s.READ)
-async def read(user: BasicUser, id: int) -> PlayerRole:
+async def read(user: BasicUser, id: int) -> PlayerRolePublic:
     return _pr.read(id)
 
 
 @router.put(prefix(id=True), tags=_t, summary=_s.UPDATE)
-async def update(user: BasicUser, id: int, pr: PlayerRole) -> Result:
+async def update(user: BasicUser, id: int, pr: PlayerRoleUpdate) -> Result:
     _pr.read(id)
     return _pr.update(id, pr, user)
 

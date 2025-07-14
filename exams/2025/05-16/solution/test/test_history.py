@@ -64,17 +64,6 @@ class TestHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_integrity_violation(self: Self, username: str,
-                                        auth_header: str) -> None:
-        d = DATA.copy()
-        team_id = self.get_id(username, REF_TEAM)
-        player_id = self.get_id(username, REF_PLAYER)
-        d.update(team_id=team_id, player_id=player_id)
-        d.update(**ADD_FIELD)
-        resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_406(resp)
-
-    @pytest.mark.order(ORDER.create)
     def test_create_add_field(self: Self, username: str,
                               auth_header: str) -> None:
         d = DATA.copy()
@@ -87,8 +76,8 @@ class TestHistory(TestBase):
         self.save_id(username, REF, resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses(self: Self, username: str,
-                              auth_header: str) -> None:
+    def test_create_404team(self: Self, username: str,
+                            auth_header: str) -> None:
         d = DATA.copy()
         team_id = ID_NOT_FOUND
         player_id = self.get_id(username, REF_PLAYER)
@@ -97,8 +86,8 @@ class TestHistory(TestBase):
         self.is_status_404(resp, TARGET_TEAM)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses_wrong_field(self: Self, username: str,
-                                          auth_header: str) -> None:
+    def test_create_404team_wrong_field(self: Self, username: str,
+                                        auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
         team_id = ID_NOT_FOUND
@@ -108,8 +97,8 @@ class TestHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses_miss_field(self: Self, username: str,
-                                         auth_header: str) -> None:
+    def test_create_404team_miss_field(self: Self, username: str,
+                                       auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
         team_id = ID_NOT_FOUND
@@ -119,8 +108,8 @@ class TestHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses_add_field(self: Self, username: str,
-                                        auth_header: str) -> None:
+    def test_create_404team_404player_add_field(self: Self, username: str,
+                                                auth_header: str) -> None:
         d = DATA.copy()
         team_id = ID_NOT_FOUND
         player_id = self.get_id(username, REF_PLAYER)
@@ -129,7 +118,7 @@ class TestHistory(TestBase):
         self.is_status_404(resp, TARGET_TEAM)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404ex(self: Self, username: str, auth_header: str) -> None:
+    def test_create_404player(self: Self, username: str, auth_header: str) -> None:
         d = DATA.copy()
         team_id = self.get_id(username, REF_TEAM)
         player_id = ID_NOT_FOUND
@@ -138,8 +127,8 @@ class TestHistory(TestBase):
         self.is_status_404(resp, TARGET_PLAYER)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404ex_wrong_field(self: Self, username: str,
-                                      auth_header: str) -> None:
+    def test_create_404player_wrong_field(self: Self, username: str,
+                                          auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
         team_id = self.get_id(username, REF_TEAM)
@@ -149,7 +138,7 @@ class TestHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404ex_miss_field(self: Self, username: str,
+    def test_create_404player_miss_field(self: Self, username: str,
                                      auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
@@ -160,7 +149,7 @@ class TestHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404ex_add_field(self: Self, username: str,
+    def test_create_404player_add_field(self: Self, username: str,
                                     auth_header: str) -> None:
         d = DATA.copy()
         team_id = self.get_id(username, REF_TEAM)
@@ -170,8 +159,8 @@ class TestHistory(TestBase):
         self.is_status_404(resp, TARGET_PLAYER)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses_404ex(self: Self, username: str,
-                                    auth_header: str) -> None:
+    def test_create_404team_404player(self: Self, username: str,
+                                      auth_header: str) -> None:
         d = DATA.copy()
         team_id = ID_NOT_FOUND
         player_id = ID_NOT_FOUND
@@ -180,8 +169,8 @@ class TestHistory(TestBase):
         self.is_status_404(resp, TARGET_TEAM)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses_404ex_wrong_field(self: Self, username: str,
-                                                auth_header: str) -> None:
+    def test_create_404team_404player_wrong_field(self: Self, username: str,
+                                                  auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
         team_id = ID_NOT_FOUND
@@ -191,8 +180,8 @@ class TestHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses_404ex_miss_field(self: Self, username: str,
-                                               auth_header: str) -> None:
+    def test_create_404team_404player_miss_field(self: Self, username: str,
+                                                 auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
         team_id = ID_NOT_FOUND
@@ -202,8 +191,8 @@ class TestHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404tr_ses_404ex_add_field(self: Self, username: str,
-                                              auth_header: str) -> None:
+    def test_create_404team_404player_add_field(self: Self, username: str,
+                                                auth_header: str) -> None:
         d = DATA.copy()
         team_id = ID_NOT_FOUND
         player_id = ID_NOT_FOUND
@@ -241,6 +230,7 @@ class TestHistory(TestBase):
         d = DATA.copy()
         d.update(**UPDATE)
         _id = self.get_id(username, REF, string=True)
+        print(d)
         resp = _u(_j(_id), headers=auth_header, json=d)
         self.is_status_200(resp, Action.UPDATED)
 

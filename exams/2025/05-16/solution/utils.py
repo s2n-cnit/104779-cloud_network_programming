@@ -12,10 +12,9 @@ from forbiddenfruit import curse
 
 
 def datetime_check(value):
-    print(f"datetime check: {value}")
-    if not isinstance(value, datetime):
-        return datetime.fromisoformat(value)
-    return datetime
+    # if not isinstance(value, datetime):
+    #     return datetime.fromisoformat(value)
+    return value
 
 
 class Struct:

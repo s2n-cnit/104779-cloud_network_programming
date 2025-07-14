@@ -4,13 +4,12 @@ from typing import List
 from db import DB
 from error import NotEmptyException
 from fastapi import APIRouter
-from model import PlayerRole, Player, Result
-from router.player_role import LABEL as PR_LABEL
+from model import Player, Result, PlayerUpdate, PlayerCreate, PlayerPublic
+from router.player_role import _pr
 from router.lib import BasicUser, is_admin, prefix
 
 LABEL = "Player"
 _t = [LABEL]
-_pr = DB[PlayerRole](PlayerRole, PR_LABEL)
 _player = DB[Player](Player, LABEL)
 router = APIRouter(prefix=f"/{LABEL.lower()}", tags=_t)
 
@@ -24,13 +23,13 @@ class _s(str, Enum):
 
 
 @router.post(prefix(), tags=_t, summary=_s.CREATE)
-async def create(user: BasicUser, player: Player) -> Result:
+async def create(user: BasicUser, player: PlayerCreate) -> Result:
     _pr.read(player.player_role_id)
     return _player.create(player, user)
 
 
 @router.get(prefix(), tags=_t, summary=_s.READ_ALL)
-async def read_all(user: BasicUser) -> List[Player]:
+async def read_all(user: BasicUser) -> List[PlayerPublic]:
     if is_admin(user):
         return _player.read_all()
     else:
@@ -38,7 +37,7 @@ async def read_all(user: BasicUser) -> List[Player]:
 
 
 @router.get(prefix(id=True), tags=_t, summary=_s.READ)
-async def read(user: BasicUser, id: int) -> Player:
+async def read(user: BasicUser, id: int) -> PlayerPublic:
     if is_admin(user):
         return _player.read(id)
     else:
@@ -46,7 +45,7 @@ async def read(user: BasicUser, id: int) -> Player:
 
 
 @router.put(prefix(id=True), tags=_t, summary=_s.UPDATE)
-async def update(user: BasicUser, id: int, player: Player) -> Result:
+async def update(user: BasicUser, id: int, player: PlayerUpdate) -> Result:
     if is_admin(user):
         _player.read(id)
     else:

@@ -4,7 +4,7 @@ from typing import List
 from db import DB
 from error import NotEmptyException
 from fastapi import APIRouter
-from model import Result, Team
+from model import Result, Team, TeamUpdate, TeamCreate, TeamPublic
 from router.lib import BasicUser, is_admin, prefix
 
 LABEL = "Team"
@@ -22,12 +22,12 @@ class _s(str, Enum):
 
 
 @router.post(prefix(), tags=_t, summary=_s.CREATE)
-async def create(user: BasicUser, team: Team) -> Result:
+async def create(user: BasicUser, team: TeamCreate) -> Result:
     return _team.create(team, user)
 
 
 @router.get(prefix(), tags=_t, summary=_s.READ_ALL)
-async def read_all(user: BasicUser) -> List[Team]:
+async def read_all(user: BasicUser) -> List[TeamPublic]:
     if is_admin(user):
         return _team.read_all()
     else:
@@ -35,7 +35,7 @@ async def read_all(user: BasicUser) -> List[Team]:
 
 
 @router.get(prefix(id=True), tags=_t, summary=_s.READ)
-async def read(user: BasicUser, id: int) -> Team:
+async def read(user: BasicUser, id: int) -> TeamPublic:
     if is_admin(user):
         return _team.read(id)
     else:
@@ -44,7 +44,7 @@ async def read(user: BasicUser, id: int) -> Team:
 
 @router.put(prefix(id=True), tags=_t, summary=_s.UPDATE)
 async def update(
-    user: BasicUser, id: int, team: Team
+    user: BasicUser, id: int, team: TeamUpdate
 ) -> Result:
     if is_admin(user):
         _team.read(id)
