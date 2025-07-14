@@ -39,7 +39,7 @@ class TestTeam(TestBase):
         d = DATA.copy()
         d.rename(**RENAME)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_422(resp)
+        self.is_status_406(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_miss_field(self: Self, username: str,
@@ -47,7 +47,7 @@ class TestTeam(TestBase):
         d = DATA.copy()
         d.pop(FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_422(resp)
+        self.is_status_406(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_add_field(self: Self, username: str,

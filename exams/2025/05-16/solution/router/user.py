@@ -3,7 +3,7 @@ from typing import List
 
 from db import DB
 from fastapi import APIRouter
-from model import Result, User, UserCreate, UserPublic, UserUpdate
+from model import Result, User
 from router.lib import AdminUser, BasicUser, prefix
 
 LABEL = "User"
@@ -24,33 +24,33 @@ class _s(str, Enum):
 
 
 @router.post(prefix(), tags=_t, summary=_s.CREATE)
-async def create(admin_user: AdminUser, user: UserCreate) -> Result:
+async def create(admin_user: AdminUser, user: User) -> Result:
     return _user.create(user, admin_user)
 
 
 @router.get(prefix(), tags=_t, summary=_s.READ_ALL)
-async def read_all(user: AdminUser) -> List[UserPublic]:
+async def read_all(user: AdminUser) -> List[User]:
     return _user.read_all()
 
 
 @router.get(prefix(me=True), tags=_t, summary=_s.READ_ME)
-async def read_me(user: BasicUser) -> List[UserPublic]:
+async def read_me(user: BasicUser) -> User:
     return user
 
 
 @router.get(prefix(id=True), tags=_t, summary=_s.READ)
-async def read(user: AdminUser, id: str) -> UserPublic:
+async def read(user: AdminUser, id: str) -> User:
     return _user.read(id)
 
 
 @router.put(prefix(id=True), tags=_t, summary=_s.UPDATE)
-async def update(admin_user: AdminUser, user: UserUpdate) -> Result:
+async def update(admin_user: AdminUser, user: User) -> Result:
     _user.read(id)
     return _user.update(id, user, admin_user)
 
 
 @router.put(prefix(me=True), tags=_t, summary=_s.UPDATE_ME)
-async def update_me(basic_user: BasicUser, user: UserUpdate) -> Result:
+async def update_me(basic_user: BasicUser, user: User) -> Result:
     return _user.update(basic_user.id, user, basic_user)
 
 

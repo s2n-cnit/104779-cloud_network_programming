@@ -32,20 +32,20 @@ def _j(*args, sep="/") -> str:
     return sep.join(args)
 
 
-_birth_date = datetime(2000, 7, 10, 10, 30, 00).strftime("%Y-%m-%d %H:%M:%S.%f")
+_birth_date = datetime(2000, 7, 10, 10, 30, 00).isoformat()
 UPDATE_PLAYER = ImmutableDict(name="new-player-name", birth_date=_birth_date)
 UPDATE_PLAYER_ROLE = ImmutableDict(name="new-player-role-name")
 UPDATE_TEAM = ImmutableDict(name="new-team-name", year_foundation=1950, city="Milan")
-_start_date = datetime(2020, 9, 20, 10, 30, 00).strftime("%Y-%m-%d %H:%M:%S.%f")
-_end_date = datetime(2022, 7, 1, 10, 30, 00).strftime("%Y-%m-%d %H:%M:%S.%f")
+_start_date = datetime(2020, 9, 20, 10, 30, 00).isoformat()
+_end_date = datetime(2022, 7, 1, 10, 30, 00).isoformat()
 UPDATE_HISTORY = ImmutableDict(start_date=_start_date, end_date=_end_date)
 
 DATA_PLAYER_ROLE = ImmutableDict(name="player-role-name")
-_birth_date = datetime(2001, 7, 10, 10, 30, 00).strftime("%Y-%m-%d %H:%M:%S.%f")
+_birth_date = datetime(2001, 7, 10, 10, 30, 00).isoformat()
 DATA_PLAYER = ImmutableDict(name="player-name", birth_date=_birth_date)
 DATA_TEAM = ImmutableDict(name="team-name", year_foundation=1955, city="Genoa")
-_start_date = datetime(2021, 9, 21, 10, 30, 00).strftime("%Y-%m-%d %H:%M:%S.%f")
-_end_date = datetime(2023, 7, 10, 10, 30, 00).strftime("%Y-%m-%d %H:%M:%S.%f")
+_start_date = datetime(2021, 9, 21, 10, 30, 00).isoformat()
+_end_date = datetime(2023, 7, 10, 10, 30, 00).isoformat()
 DATA_HISTORY = ImmutableDict(start_date=_start_date, end_date=_end_date)
 
 ORDER_PLAYER_ROLE = Struct(create=1, read=2, update=3, delete=88, delete_check=100)
@@ -63,7 +63,7 @@ FIELD_HISTORY = "start_date"
 RENAME_PLAYER = ImmutableDict(name="names")
 RENAME_PLAYER_ROLE = ImmutableDict(name="names")
 RENAME_TEAM = ImmutableDict(name="names")
-_start_date = datetime(2021, 9, 21, 10, 32, 00).strftime("%Y-%m-%d %H:%M:%S.%f")
+_start_date = datetime(2021, 9, 21, 10, 32, 00).isoformat()
 RENAME_HISTORY = ImmutableDict(start_date=_start_date)
 
 LABEL_PLAYER_ROLE = "player-role"

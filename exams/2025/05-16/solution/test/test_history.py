@@ -36,7 +36,6 @@ class TestHistory(TestBase):
         d = DATA.copy()
         team_id = self.get_id(username, REF_TEAM)
         player_id = self.get_id(username, REF_PLAYER)
-        print(f"ID: {player_id}")
         d.update(team_id=team_id, player_id=player_id)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_200(resp, Action.CREATED)
@@ -47,7 +46,7 @@ class TestHistory(TestBase):
                                 auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
-        team_id = self.get_id(username, REF_TEAM, string=True)
+        team_id = self.get_id(username, REF_TEAM)
         player_id = self.get_id(username, REF_PLAYER)
         d.update(team_id=team_id, player_id=player_id)
         resp = _c(_j(), headers=auth_header, json=d)

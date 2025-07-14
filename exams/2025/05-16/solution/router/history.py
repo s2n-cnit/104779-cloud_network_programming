@@ -56,7 +56,15 @@ async def update(user: BasicUser, id: int,
                  hist: HistoryUpdate) -> Result:
     if is_admin(user):
         _hist.read(id)
+        if hist.team_id is not None:
+            _team.read(hist.team_id)
+        if hist.player_id is not None:
+            _player.read(hist.player_id)
     else:
+        if hist.team_id is not None:
+            _team.read_personal(hist.team_id, user.teams_created)
+        if hist.player_id is not None:
+            _player.read_personal(hist.player_id, user.players_created)
         _hist.read_personal(id, user.history_created)
     return _hist.update(id, hist, user)
 

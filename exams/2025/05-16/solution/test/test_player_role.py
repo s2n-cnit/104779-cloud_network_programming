@@ -30,9 +30,8 @@ class TestPlayerRole(TestBase):
     @pytest.mark.order(ORDER.create)
     def test_create(self: Self, username: str, auth_header: str) -> None:
         resp = _c(_j(), headers=auth_header, json=DATA)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp, Action.CREATED)
-            self.save_id(username, REF, resp)
+        self.is_status_200(resp, Action.CREATED)
+        self.save_id(username, REF, resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_wrong_field(
@@ -41,8 +40,7 @@ class TestPlayerRole(TestBase):
         d = DATA.copy()
         d.rename(**RENAME)
         resp = _c(_j(), headers=auth_header, json=d)
-        if self.is_admin_ok(username, resp):
-            self.is_status_422(resp)
+        self.is_status_406(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_miss_field(
@@ -51,8 +49,7 @@ class TestPlayerRole(TestBase):
         d = DATA.copy()
         d.pop(FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
-        if self.is_admin_ok(username, resp):
-            self.is_status_422(resp)
+        self.is_status_406(resp)
 
     @pytest.mark.order(ORDER.create)
     def test_create_add_field(
@@ -61,37 +58,33 @@ class TestPlayerRole(TestBase):
         d = DATA.copy()
         d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp, Action.CREATED)
-            self.save_id(username, REF, resp)
+        self.is_status_200(resp, Action.CREATED)
+        self.save_id(username, REF, resp)
 
     @pytest.mark.order(ORDER.read)
     def test_read(self: Self, username: str, auth_header: str) -> None:
         _id = self.get_id(username, REF, string=True)
         resp = _r(_j(_id), headers=auth_header)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp)
-            json = resp.json()
-            assert type(json) is dict, json
-            for field in get_properties(PlayerRolePublic):
-                assert field in json, (json, field)
+        self.is_status_200(resp)
+        json = resp.json()
+        assert type(json) is dict, json
+        for field in get_properties(PlayerRolePublic):
+            assert field in json, (json, field)
 
     @pytest.mark.order(ORDER.read)
     def test_read_all(self: Self, username: str, auth_header: str) -> None:
         resp = _r(_j(), headers=auth_header)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp)
-            json = resp.json()
-            assert type(json) is list, json
-            assert len(json) > 0, json
-            for field in get_properties(PlayerRolePublic):
-                assert field in json[0], (json, field)
+        self.is_status_200(resp)
+        json = resp.json()
+        assert type(json) is list, json
+        assert len(json) > 0, json
+        for field in get_properties(PlayerRolePublic):
+            assert field in json[0], (json, field)
 
     @pytest.mark.order(ORDER.read)
     def test_read_404(self: Self, username: str, auth_header: str) -> None:
         resp = _r(_j(str(ID_NOT_FOUND)), headers=auth_header)
-        if self.is_admin_ok(username, resp):
-            self.is_status_404(resp, TARGET)
+        self.is_status_404(resp, TARGET)
 
     @pytest.mark.order(ORDER.update)
     def test_update(self: Self, username: str, auth_header: str) -> None:
@@ -99,16 +92,14 @@ class TestPlayerRole(TestBase):
         d.update(**UPDATE)
         _id = self.get_id(username, REF, string=True)
         resp = _u(_j(_id), headers=auth_header, json=d)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp, Action.UPDATED)
+        self.is_status_200(resp, Action.UPDATED)
 
     @pytest.mark.order(ORDER.update)
     def test_update_404(self: Self, username: str, auth_header: str) -> None:
         d = DATA.copy()
         d.update(**UPDATE)
         resp = _u(_j(str(ID_NOT_FOUND)), headers=auth_header, json=d)
-        if self.is_admin_ok(username, resp):
-            self.is_status_404(resp, TARGET)
+        self.is_status_404(resp, TARGET)
 
     @pytest.mark.order(ORDER.update)
     def test_update_wrong_field(
@@ -118,8 +109,7 @@ class TestPlayerRole(TestBase):
         d.rename(**RENAME)
         _id = self.get_id(username, REF, string=True)
         resp = _u(_j(_id), headers=auth_header, json=d)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp, Action.UPDATED)
+        self.is_status_200(resp, Action.UPDATED)
 
     @pytest.mark.order(ORDER.update)
     def test_update_add_field(
@@ -128,15 +118,13 @@ class TestPlayerRole(TestBase):
         d = ADD_FIELD
         _id = self.get_id(username, REF, string=True)
         resp = _u(_j(_id), headers=auth_header, json=d)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp, Action.UPDATED)
+        self.is_status_200(resp, Action.UPDATED)
 
     @pytest.mark.order(ORDER.delete)
     def test_del(self: Self, username: str, auth_header: str) -> None:
         _id = self.get_id(username, REF, string=True, delete=True, nth=1)
         resp = _d(_j(_id), headers=auth_header)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp, Action.DELETED)
+        self.is_status_200(resp, Action.DELETED)
 
     @pytest.mark.order(ORDER.delete)
     def test_del_not_empty(
@@ -144,18 +132,15 @@ class TestPlayerRole(TestBase):
     ) -> None:
         _id = self.get_id(username, REF, string=True)
         resp = _d(_j(_id), headers=auth_header)
-        if self.is_admin_ok(username, resp):
-            self.is_status_406not_empty(resp, TARGET)
+        self.is_status_406not_empty(resp, TARGET)
 
     @pytest.mark.order(ORDER.delete)
     def test_del_404(self: Self, username: str, auth_header: str) -> None:
         resp = _d(_j(str(ID_NOT_FOUND)), headers=auth_header)
-        if self.is_admin_ok(username, resp):
-            self.is_status_404(resp, TARGET)
+        self.is_status_404(resp, TARGET)
 
     @pytest.mark.order(ORDER.delete_check)
     def test_del_check(self: Self, username: str, auth_header: str) -> None:
         _id = self.get_id(username, REF, string=True, delete=True)
         resp = _d(_j(_id), headers=auth_header)
-        if self.is_admin_ok(username, resp):
-            self.is_status_200(resp, Action.DELETED)
+        self.is_status_200(resp, Action.DELETED)

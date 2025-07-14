@@ -1,11 +1,13 @@
 from datetime import datetime
-from typing import List, Optional, Self
-
+from typing import List, Optional, Self, Annotated
+from pydantic import BeforeValidator
 from config import db_path, echo_engine
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlmodel import (Field, Relationship, SQLModel,
                       create_engine)
+from utils import datetime_check
+
 
 # Base
 
@@ -26,13 +28,13 @@ class BasePublic(SQLModel):
 class HistoryCreate(SQLModel):
     player_id: int = Field(foreign_key="player.id")
     team_id: int = Field(foreign_key="team.id")
-    start_date: datetime
-    end_date: datetime
+    start_date: Annotated[str, BeforeValidator(datetime_check)]
+    end_date: Annotated[str, BeforeValidator(datetime_check)]
 
 
 class HistoryUpdate(SQLModel):
-    start_date: Optional[datetime] = None
-    end_dater: Optional[datetime] = None
+    start_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
+    end_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
 
 
 class HistoryPublic(HistoryCreate, BasePublic):
@@ -78,13 +80,13 @@ class History(HistoryPublic, table=True):
 
 class PlayerCreate(SQLModel):
     name: str
-    birth_date: datetime
+    birth_date: Annotated[str, BeforeValidator(datetime_check)]
     player_role_id: int = Field(foreign_key="player_role.id")
 
 
 class PlayerUpdate(SQLModel):
     name: Optional[str] = None
-    birth_date: Optional[datetime] = None
+    birth_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
     player_role_id: Optional[int] = Field(default=None, foreign_key="player_role.id")
 
 

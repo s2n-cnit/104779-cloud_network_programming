@@ -6,9 +6,16 @@ import threading
 from enum import Enum
 from subprocess import PIPE, run
 from threading import Thread
-from typing import Dict, List, Optional, Self, Type
-
+from typing import Dict, Optional, Self, Type
+from datetime import datetime
 from forbiddenfruit import curse
+
+
+def datetime_check(value):
+    print(f"datetime check: {value}")
+    if not isinstance(value, datetime):
+        return datetime.fromisoformat(value)
+    return datetime
 
 
 class Struct:

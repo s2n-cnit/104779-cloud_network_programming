@@ -4,14 +4,13 @@ from typing import List
 from db import DB
 from error import NotEmptyException
 from fastapi import APIRouter
-from model import (PlayerRole, Player, PlayerCreate, PlayerPublic,
-                   PlayerUpdate, Result)
-from router.player_role import LABEL as CAT_LABEL
-from router.lib import AdminUser, BasicUser, prefix
+from model import PlayerRole, Player, Result
+from router.player_role import LABEL as PR_LABEL
+from router.lib import BasicUser, is_admin, prefix
 
 LABEL = "Player"
 _t = [LABEL]
-_pr = DB[PlayerRole](PlayerRole, CAT_LABEL)
+_pr = DB[PlayerRole](PlayerRole, PR_LABEL)
 _player = DB[Player](Player, LABEL)
 router = APIRouter(prefix=f"/{LABEL.lower()}", tags=_t)
 
@@ -25,32 +24,44 @@ class _s(str, Enum):
 
 
 @router.post(prefix(), tags=_t, summary=_s.CREATE)
-async def create(user: AdminUser, player: PlayerCreate) -> Result:
+async def create(user: BasicUser, player: Player) -> Result:
     _pr.read(player.player_role_id)
     return _player.create(player, user)
 
 
 @router.get(prefix(), tags=_t, summary=_s.READ_ALL)
-async def read_all(user: BasicUser) -> List[PlayerPublic]:
-    return _player.read_all()
+async def read_all(user: BasicUser) -> List[Player]:
+    if is_admin(user):
+        return _player.read_all()
+    else:
+        return user.players_created
 
 
 @router.get(prefix(id=True), tags=_t, summary=_s.READ)
-async def read(user: BasicUser, id: int) -> PlayerPublic:
-    return _player.read(id)
+async def read(user: BasicUser, id: int) -> Player:
+    if is_admin(user):
+        return _player.read(id)
+    else:
+        return _player.read_personal(id, user.players_created)
 
 
 @router.put(prefix(id=True), tags=_t, summary=_s.UPDATE)
-async def update(user: AdminUser, id: int, player: PlayerUpdate) -> Result:
-    _player.read(id)
+async def update(user: BasicUser, id: int, player: Player) -> Result:
+    if is_admin(user):
+        _player.read(id)
+    else:
+        _player.read_personal(id, user.players_created)
     if player.player_role_id is not None:
         _pr.read(player.player_role_id)
     return _player.update(id, player, user)
 
 
 @router.delete(prefix(id=True), tags=_t, summary=_s.DELETE)
-async def delete(user: AdminUser, id: int) -> Result:
-    player = _player.read(id)
-    if len(player.player_sessions) > 0:
+async def delete(user: BasicUser, id: int) -> Result:
+    if is_admin(user):
+        player = _player.read(id)
+    else:
+        player = _player.read_personal(id, user.players_created)
+    if len(player.history) > 0:
         raise NotEmptyException(LABEL, id)
     return _player.delete(id)
