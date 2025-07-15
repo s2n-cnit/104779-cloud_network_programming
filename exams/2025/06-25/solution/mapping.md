@@ -1,4 +1,0 @@
-- player_role => country
-- player => city
-- team => report
-- history => report_history

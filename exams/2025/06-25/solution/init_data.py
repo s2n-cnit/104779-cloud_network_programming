@@ -1,5 +1,3 @@
-#!/usr/bin/env -S poetry -C /axc-mgmt/github/teaching/104779-cloud_net_prog/exams/2025/05-16/solution run python
-
 import os
 from datetime import datetime  # noqa: E402
 

@@ -61,6 +61,6 @@ async def delete(user: BasicUser, id: int) -> Result:
         city = _city.read(id)
     else:
         city = _city.read_personal(id, user.cities_created)
-    if len(city.history) > 0:
+    if len(city.report_history) > 0:
         raise NotEmptyException(LABEL, id)
     return _city.delete(id)

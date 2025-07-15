@@ -1,5 +1,3 @@
-#!/usr/bin/env -S poetry -C /axc-mgmt/github/teaching/104779-internet_programming/exams/2024/07-05/solution run pytest
-
 from functools import partial
 from test.lib import ADD_FIELD
 from test.lib import DATA_HISTORY as DATA
@@ -114,6 +112,7 @@ class TestHistory(TestBase):
         team_id = ID_NOT_FOUND
         player_id = self.get_id(username, REF_PLAYER)
         d.update(team_id=team_id, player_id=player_id)
+        d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_404(resp, TARGET_TEAM)
 
@@ -155,6 +154,7 @@ class TestHistory(TestBase):
         team_id = self.get_id(username, REF_TEAM)
         player_id = ID_NOT_FOUND
         d.update(team_id=team_id, player_id=player_id)
+        d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_404(resp, TARGET_PLAYER)
 
@@ -197,6 +197,7 @@ class TestHistory(TestBase):
         team_id = ID_NOT_FOUND
         player_id = ID_NOT_FOUND
         d.update(team_id=team_id, player_id=player_id)
+        d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_404(resp, TARGET_TEAM)
 

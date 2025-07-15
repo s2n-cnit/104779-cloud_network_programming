@@ -5,7 +5,7 @@ from config import db_path, echo_engine
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlmodel import (Field, Relationship, SQLModel,
-                      create_engine)
+                      create_engine, UniqueConstraint)
 from utils import datetime_check
 
 
@@ -33,9 +33,9 @@ class ReportHistoryCreate(SQLModel):
     measure: float
 
 class ReportHistoryUpdate(SQLModel):
-    start_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
-    end_date: Optional[Annotated[str, BeforeValidator(datetime_check)]] = None
-    measure: Optional[int] = None
+    start_date: Optional[Annotated[datetime, BeforeValidator(datetime_check)]] = None
+    end_date: Optional[Annotated[datetime, BeforeValidator(datetime_check)]] = None
+    measure: Optional[float] = None
 
 class ReportHistoryPublic(ReportHistoryCreate, BasePublic):
     id: int = Field(
@@ -109,9 +109,9 @@ class CityPublic(CityCreate, BasePublic):
 
 class City(CityPublic, table=True):
     country: "Country" = Relationship(
-        back_populates="citys",
+        back_populates="cities",
         sa_relationship_kwargs={
-            "primaryjoin": "City.country==Country.id",
+            "primaryjoin": "City.country_id==Country.id",
             "lazy": "selectin",
         },
     )
@@ -123,14 +123,14 @@ class City(CityPublic, table=True):
         },
     )
     created_by: "User" = Relationship(
-        back_populates="citys_created",
+        back_populates="cities_created",
         sa_relationship_kwargs={
             "primaryjoin": "City.created_by_id==User.id",
             "lazy": "selectin",
         },
     )
     updated_by: "User" = Relationship(
-        back_populates="citys_updated",
+        back_populates="cities_updated",
         sa_relationship_kwargs={
             "primaryjoin": "City.updated_by_id==User.id",
             "lazy": "selectin",
@@ -144,7 +144,7 @@ class City(CityPublic, table=True):
 class ReportCreate(SQLModel):
     name: str
     description: str
-    unit: sr
+    unit: str
 
 
 class ReportUpdate(ReportCreate):
@@ -244,7 +244,7 @@ class UserPublic(BasePublic):
 
 
 class User(UserCreate, BasePublic, table=True):
-    citys_created: List["City"] = Relationship(
+    cities_created: List["City"] = Relationship(
         back_populates="created_by",
         sa_relationship_kwargs={
             "primaryjoin": "City.created_by_id==User.id",
@@ -273,7 +273,7 @@ class User(UserCreate, BasePublic, table=True):
         },
     )
 
-    countries_updated: List["City"] = Relationship(
+    cities_updated: List["City"] = Relationship(
         back_populates="updated_by",
         sa_relationship_kwargs={
             "primaryjoin": "City.updated_by_id==User.id",
@@ -322,7 +322,7 @@ class CountryPublic(CountryCreate, BasePublic):
 
 class Country(CountryPublic, table=True):
     __tablename__ = "country"
-    citys: List[City] = Relationship(
+    cities: List[City] = Relationship(
         back_populates="country",
         sa_relationship_kwargs={
             "primaryjoin": "City.country_id==Country.id",

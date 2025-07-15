@@ -1,5 +1,3 @@
-#!/usr/bin/env -S poetry -C /axc-mgmt/github/teaching/104779-internet_programming/exams/2024/07-05/solution run pytest
-
 from functools import partial
 from test.lib import ADD_FIELD
 from test.lib import DATA_REPORT_HISTORY as DATA
@@ -108,30 +106,31 @@ class TestReportHistory(TestBase):
         self.is_status_422(resp)
 
     @pytest.mark.order(ORDER.create)
-    def test_create_404report_404city_add_field(self: Self, username: str,
-                                                auth_header: str) -> None:
+    def test_create_404report_add_field(self: Self, username: str,
+                                        auth_header: str) -> None:
         d = DATA.copy()
         report_id = ID_NOT_FOUND
         city_id = self.get_id(username, REF_CITY)
         d.update(report_id=report_id, city_id=city_id)
+        d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
         self.is_status_404(resp, TARGET_REPORT)
 
     @pytest.mark.order(ORDER.create)
     def test_create_404city(self: Self, username: str, auth_header: str) -> None:
         d = DATA.copy()
-        report_id = self.get_id(username, REF_report)
+        report_id = self.get_id(username, REF_REPORT)
         city_id = ID_NOT_FOUND
         d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_city)
+        self.is_status_404(resp, TARGET_CITY)
 
     @pytest.mark.order(ORDER.create)
     def test_create_404city_wrong_field(self: Self, username: str,
                                           auth_header: str) -> None:
         d = DATA.copy()
         d.rename(**RENAME)
-        report_id = self.get_id(username, REF_report)
+        report_id = self.get_id(username, REF_REPORT)
         city_id = ID_NOT_FOUND
         d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
@@ -142,7 +141,7 @@ class TestReportHistory(TestBase):
                                      auth_header: str) -> None:
         d = DATA.copy()
         d.pop(FIELD)
-        report_id = self.get_id(username, REF_report)
+        report_id = self.get_id(username, REF_REPORT)
         city_id = ID_NOT_FOUND
         d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
@@ -152,11 +151,12 @@ class TestReportHistory(TestBase):
     def test_create_404city_add_field(self: Self, username: str,
                                     auth_header: str) -> None:
         d = DATA.copy()
-        report_id = self.get_id(username, REF_report)
+        report_id = self.get_id(username, REF_REPORT)
         city_id = ID_NOT_FOUND
         d.update(report_id=report_id, city_id=city_id)
+        d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_city)
+        self.is_status_404(resp, TARGET_CITY)
 
     @pytest.mark.order(ORDER.create)
     def test_create_404report_404city(self: Self, username: str,
@@ -166,7 +166,7 @@ class TestReportHistory(TestBase):
         city_id = ID_NOT_FOUND
         d.update(report_id=report_id, city_id=city_id)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_report)
+        self.is_status_404(resp, TARGET_CITY)
 
     @pytest.mark.order(ORDER.create)
     def test_create_404report_404city_wrong_field(self: Self, username: str,
@@ -197,8 +197,9 @@ class TestReportHistory(TestBase):
         report_id = ID_NOT_FOUND
         city_id = ID_NOT_FOUND
         d.update(report_id=report_id, city_id=city_id)
+        d.update(**ADD_FIELD)
         resp = _c(_j(), headers=auth_header, json=d)
-        self.is_status_404(resp, TARGET_report)
+        self.is_status_404(resp, TARGET_CITY)
 
     @pytest.mark.order(ORDER.read)
     def test_read(self: Self, username: str, auth_header: str) -> None:

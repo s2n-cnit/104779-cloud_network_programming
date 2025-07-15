@@ -9,7 +9,7 @@ from router.lib import BasicUser, prefix
 
 LABEL = "Country"
 _t = [LABEL]
-_pr = DB[Country](Country, LABEL)
+_country = DB[Country](Country, LABEL)
 router = APIRouter(prefix=f"/{LABEL.lower()}", tags=_t)
 
 
@@ -23,28 +23,28 @@ class _s(str, Enum):
 
 @router.post(prefix(), tags=_t, summary=_s.CREATE)
 async def create(user: BasicUser, country: CountryCreate) -> Result:
-    return _pr.create(country, user)
+    return _country.create(country, user)
 
 
 @router.get(prefix(), tags=_t, summary=_s.READ_ALL)
 async def read_all(user: BasicUser) -> List[CountryPublic]:
-    return _pr.read_all()
+    return _country.read_all()
 
 
 @router.get(prefix(id=True), tags=_t, summary=_s.READ)
 async def read(user: BasicUser, id: int) -> CountryPublic:
-    return _pr.read(id)
+    return _country.read(id)
 
 
 @router.put(prefix(id=True), tags=_t, summary=_s.UPDATE)
 async def update(user: BasicUser, id: int, country: CountryUpdate) -> Result:
-    _pr.read(id)
-    return _pr.update(id, pr, user)
+    _country.read(id)
+    return _country.update(id, country, user)
 
 
 @router.delete(prefix(id=True), tags=_t, summary=_s.DELETE)
 async def delete(user: BasicUser, id: int) -> Result:
-    pr = _pr.read(id)
-    if len(pr.players) > 0:
+    country = _country.read(id)
+    if len(country.cities) > 0:
         raise NotEmptyException(LABEL, id)
-    return _pr.delete(id)
+    return _country.delete(id)

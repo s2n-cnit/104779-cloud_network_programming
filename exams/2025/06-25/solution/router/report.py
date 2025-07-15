@@ -59,6 +59,6 @@ async def delete(user: BasicUser, id: int) -> Result:
         report = _report.read(id)
     else:
         report = _report.read_personal(id, user.reports_created)
-    if len(report.history) > 0:
+    if len(report.report_history) > 0:
         raise NotEmptyException(LABEL, id)
     return _report.delete(id)

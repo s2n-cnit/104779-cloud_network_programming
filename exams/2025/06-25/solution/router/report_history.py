@@ -9,11 +9,11 @@ from router.city import _city
 from router.lib import BasicUser, is_admin, prefix
 from router.report import _report
 
-LABEL = "ReportHistory"
+LABEL = "Report History"
 
 _t = [LABEL]
 _rep_hist = DB[ReportHistory](ReportHistory, LABEL)
-router = APIRouter(prefix=f"/report-history}", tags=_t)
+router = APIRouter(prefix=f"/report-history", tags=_t)
 
 
 class _s(str, Enum):

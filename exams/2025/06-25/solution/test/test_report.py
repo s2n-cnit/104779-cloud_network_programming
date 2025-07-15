@@ -1,16 +1,14 @@
-#!/usr/bin/env -S poetry -C /axc-mgmt/github/teaching/104779-internet_programming/exams/2024/07-05/solution run pytest
-
 from functools import partial
 from test.lib import ADD_FIELD
-from test.lib import DATA_TEAM as DATA
-from test.lib import FIELD_TEAM as FIELD
+from test.lib import DATA_REPORT as DATA
+from test.lib import FIELD_REPORT as FIELD
 from test.lib import ID_NOT_FOUND
-from test.lib import LABEL_TEAM as LABEL
-from test.lib import ORDER_TEAM as ORDER
-from test.lib import REF_TEAM as REF
-from test.lib import RENAME_TEAM as RENAME
-from test.lib import TARGET_TEAM as TARGET
-from test.lib import UPDATE_TEAM as UPDATE
+from test.lib import LABEL_REPORT as LABEL
+from test.lib import ORDER_REPORT as ORDER
+from test.lib import REF_REPORT as REF
+from test.lib import RENAME_REPORT as RENAME
+from test.lib import TARGET_REPORT as TARGET
+from test.lib import UPDATE_REPORT as UPDATE
 from test.lib import TestBase, _c, _d
 from test.lib import _j as tmp_j
 from test.lib import _r, _u, get_properties
@@ -18,7 +16,7 @@ from typing import Self
 
 import pytest
 from db import Action
-from model import TeamPublic
+from model import ReportPublic
 
 _j = partial(tmp_j, LABEL)
 
@@ -26,7 +24,7 @@ _j = partial(tmp_j, LABEL)
 @pytest.mark.parametrize(
     "username,password", [("admin", "admin"), ("alexcarrega", "test-me")]
 )
-class TestTeam(TestBase):
+class TestReport(TestBase):
     @pytest.mark.order(ORDER.create)
     def test_create(self: Self, username: str, auth_header: str) -> None:
         resp = _c(_j(), headers=auth_header, json=DATA)
@@ -65,7 +63,7 @@ class TestTeam(TestBase):
         self.is_status_200(resp)
         json = resp.json()
         assert type(json) is dict
-        for field in get_properties(TeamPublic):
+        for field in get_properties(ReportPublic):
             assert field in json
 
     @pytest.mark.order(ORDER.read)
@@ -75,7 +73,7 @@ class TestTeam(TestBase):
         json = resp.json()
         assert type(json) is list, json
         assert len(json) > 0, json
-        for field in get_properties(TeamPublic):
+        for field in get_properties(ReportPublic):
             assert field in json[0], (json, field)
 
     @pytest.mark.order(ORDER.read)
