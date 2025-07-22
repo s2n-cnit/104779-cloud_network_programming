@@ -1,0 +1,4 @@
+server:
+  host: 130.251.217.53
+  port: 6379
+name: Bob
