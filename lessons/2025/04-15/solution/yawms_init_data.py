@@ -1,4 +1,4 @@
-#!/usr/bin/env -S poetry -C /axc-mgmt/github/teaching/104779-internet_programming/exams/2024/07-05/solution run python
+#!/usr/bin/env -S uv --directory /axc-mgmt/github/teaching/104779-internet_programming/exams/2024/07-05/solution run python
 
 import os
 from datetime import datetime  # noqa: E402
