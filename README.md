@@ -41,6 +41,12 @@
  12. [22nd April 2025](lessons/2025/04-22)
  13. [29th April 2025](lessons/2025/04-29)
 
+
+### 2026
+
+ 1. [25th February 2026](lessons/2026/02-25)
+
+
 ## Exams
 
 ### 2024
