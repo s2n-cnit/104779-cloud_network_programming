@@ -2,7 +2,7 @@ import socket
 import sys
 
 
-def main():  # sourcery skip: extract-duplicate-method
+def main():
     try:
         # create a TCP socket (SOCK_STREAM)
         s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=0)
@@ -13,8 +13,8 @@ def main():  # sourcery skip: extract-duplicate-method
 
     print("Socket created")
 
-    target_host = "130.251.245.122"  # "127.0.0.1" is the same
-    target_port = 32002  # Standard port for Web Server
+    target_host = "130.251.42.5"  # "127.0.0.1" for local testing
+    target_port = 32002
     addr = (target_host, target_port)
     try:
         s.connect(addr)
@@ -23,20 +23,15 @@ def main():  # sourcery skip: extract-duplicate-method
         print(f"Connection refused from {target_host}:{target_port}")
         print(f"Details: {err}")
         sys.exit()
-    except TimeoutError as terr:
+    except TimeoutError as t_err:
         print(f"Timeout error during connection to {target_host}:{target_port}")
-        print(f"Details: {terr}")
+        print(f"Details: {t_err}")
         sys.exit()
 
     req = "Hello from client"
     s.send(req.encode())
     d = s.recv(100000)
     print(f"Data received {d}")
-
-    # out = open("response.html", "w")
-    # out.write(d.decode())
-
-    # s.shutdown(2)
 
 
 main()
