@@ -1,4 +1,4 @@
 server:
-  host: localhost
+  host: 130.251.240.75
   port: 32000
 name: Alice

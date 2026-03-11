@@ -22,7 +22,7 @@ def main():
     while True:
         c_sock, c_addr = s.accept()
         c_name = c_sock.recv(200).decode()
-        print(f"{c_name} joins the chat")
+        print(f"{c_name} joins the chat ({c_addr})")
         t = Thread(
             target=client_management,
             kwargs={"name": c_name, "sock": c_sock, "addr": c_addr},
@@ -34,7 +34,7 @@ def main():
 
 def client_management(name, sock, addr):
     msg = "x"
-    while msg != "end":
+    while msg.lower() != "end":
         msg = sock.recv(200).decode()
         if msg != "end":
             print(f"{name} >", msg)

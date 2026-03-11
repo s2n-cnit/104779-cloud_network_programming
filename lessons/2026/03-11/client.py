@@ -31,7 +31,7 @@ def main():
 
     s.send(name.encode())
     msg = "x"
-    while msg != "end":
+    while msg.lower() != "end":
         msg = input("Message: ")
         s.send(msg.encode())
 
