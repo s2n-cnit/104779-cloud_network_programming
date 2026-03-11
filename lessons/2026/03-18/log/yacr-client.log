@@ -1,0 +1,25 @@
+socket_extended Socket created
+client Connected to the server localhost:32001
+logger Error during reception of messages from server
+logger Error: [WinError 10054] An existing connection was forcibly closed by the remote host
+socket_extended Socket created
+client Connected to the server localhost:32001
+socket_extended Socket created
+socket_extended Socket created
+client Connected to the server localhost:32001
+socket_extended Socket created
+client Connected to the server localhost:32001
+socket_extended Socket created
+client Connected to the server localhost:32001
+socket_extended Socket created
+client Connected to the server localhost:32001
+socket_extended Socket created
+client Connected to the server localhost:32001
+logger Error during reception of messages from server
+logger Error: [WinError 10054] An existing connection was forcibly closed by the remote host
+socket_extended Socket created
+client Connected to the server localhost:32001
+socket_extended Socket created
+client Connected to the server localhost:32001
+socket_extended Socket created
+client Connected to the server localhost:32001

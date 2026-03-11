@@ -1,0 +1,52 @@
+logger File server.yaml2 not found
+logger Error: [Errno 2] No such file or directory: 'server.yaml2'
+socket_extended Socket created
+socket_extended Socket created
+socket_extended Socket created
+config Host not found in the configuration file/command line options
+socket_extended Socket created
+logger Host not found in the configuration file/command line options
+socket_extended Socket created
+logger Host not found in the configuration file/command line options
+socket_extended Socket created
+logger Port not found in the configuration file/command line options
+socket_extended Socket created
+server Waiting for incoming connection at localhost:32001
+socket_extended Socket created
+server Waiting for incoming connection at localhost:32001
+server Alice (2025-02-26 17:50:46.317515) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Alice sends the message "ciao"
+server Bob (2025-02-26 17:51:59.689786) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Bob sends the message "ciao"
+server Alice leaves the chat
+socket_extended Socket created
+server Waiting for incoming connection at localhost:32001
+server Alex (2025-02-26 17:55:40.405108) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Bob (2025-02-26 17:55:52.368258) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Bob sends the message "ciao"
+server Bob sends the message "dsfds"
+server Alex leaves the chat
+socket_extended Socket created
+server Waiting for incoming connection at localhost:32001
+server Alex (2025-02-26 17:59:46.954030) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Bob (2025-02-26 18:00:19.640832) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Bob sends the message "ciao"
+server Bob leaves the chat
+socket_extended Socket created
+server Waiting for incoming connection at localhost:32001
+server Alex (2025-03-04 13:20:31.020046) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Alex sends the message "ciao"
+server Bob (2025-03-04 13:21:08.052306) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Bob sends the message "hello"
+server Alex leaves the chat
+server Bob (2025-03-04 13:22:46.053926) joined the chat
+server Waiting for incoming connection at localhost:32001
+server Bob sends the message "ciao"
