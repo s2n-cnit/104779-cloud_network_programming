@@ -57,11 +57,7 @@ class Server(SocketExtended):
         self._log.warning(msg)
         d = datetime.now()
         msg = f"{name} ({d}) leaves the chat"
-        for client_socket in self.__client_sockets:
-            try:
-                client_socket.send(msg.encode())
-            except BrokenPipeError:
-                pass
+        self.__dispatch_to_others(msg)
 
     def __dispatch_to_others(self: Server, message: str) -> None:
         for client_socket in self.__client_sockets:
