@@ -1,4 +1,4 @@
 server:
-  host: 172.19.1.101
-  port: 32000
+  host: 5.tcp.eu.ngrok.io
+  port: 16196
 name: Alice
