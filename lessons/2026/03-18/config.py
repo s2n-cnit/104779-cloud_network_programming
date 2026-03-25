@@ -10,7 +10,7 @@ class Config:
     def __init__(
         self: Config, log: Log, path: str = None, data: Dict[str, any] = dict()
     ) -> None:
-        self.__config = {}
+        self.__config = {"server": {"host": None, "port": None}, "name": None}
         self.__log: Log = log
         try:
             if path is not None:
@@ -39,7 +39,6 @@ class Config:
         if o is not None:
             return o
         self.__log.exception("Port not found in the configuration file/command line options", terminate=True)
-
 
     @property
     def name(self: Config) -> str:
