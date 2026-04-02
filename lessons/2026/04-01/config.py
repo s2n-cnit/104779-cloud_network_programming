@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict
 
 import yaml
 from logger import Log
@@ -10,7 +10,7 @@ class Config:
     def __init__(
         self: Config, log: Log, path: str = None, data: Dict[str, any] = dict()
     ) -> None:
-        self.__config = {}
+        self.__config = {"server": {"host": None, "port": None}, "name": None}
         self.__log: Log = log
         try:
             if path is not None:
@@ -22,21 +22,30 @@ class Config:
 
     @property
     def host(self: Config) -> str:
-        try:
-            return self.__config["server"]["host"]
-        except:
-            return self.__data["server"]["host"]
+        o = self.__config["server"].get("host", None)
+        if o is not None:
+            return o
+        o = self.__data["server"].get("host", None)
+        if o is not None:
+            return o
+        self.__log.exception("Host not found in the configuration file/command line options", terminate=True)
 
     @property
     def port(self: Config) -> int:
-        try:
-            return self.__config["server"]["port"]
-        except:
-            return self.__data["server"]["port"]
+        o = self.__config["server"].get("port", None)
+        if o is not None:
+            return o
+        o = self.__data["server"].get("port", None)
+        if o is not None:
+            return o
+        self.__log.exception("Port not found in the configuration file/command line options", terminate=True)
 
     @property
     def name(self: Config) -> str:
-        try:
-            return self.__config["name"]
-        except:
-            return self.__data["name"]
+        o = self.__config.get("name", None)
+        if o is not None:
+            return o
+        o = self.__data.get("name", None)
+        if o is not None:
+            return o
+        self.__log.exception("Name not found in the configuration file/command line options", terminate=True)
