@@ -1,0 +1,21 @@
+ui None
+ui 6379
+ui 6379
+ui 6379
+ui 58978
+ui 58978
+logger File alex not found
+logger Error: [Errno 2] No such file or directory: 'alex'
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
+ui 6379
