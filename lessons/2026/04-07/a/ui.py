@@ -117,8 +117,11 @@ Type \"end\" to terminate.
 
     def __accept(self, _: any) -> None:
         if self.__input_field.text.lower().strip() == "list":
-            self.__publish(type="!", message=f"@{self.__config.name} "
-                                             f"\nList of users in YACR:\n{"\n".join(self.get_user_list())}")
+            message = f"List of users in YACR:\n- {"\n- ".join(self.get_user_list())}\n"
+            new_text = f'{self.__output_field.text}\n{message}'
+            self.__output_field.buffer.document = Document(
+                text=new_text, cursor_position=len(new_text)
+            )
         elif self.__input_field.text.lower().strip() == "end":
             self.__publish(type="!", message="leaves the chat")
             sys.exit(0)
