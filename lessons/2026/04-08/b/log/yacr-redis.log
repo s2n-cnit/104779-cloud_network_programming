@@ -1,0 +1,118 @@
+ui 6379
+__main__ Received message from Alex: leaves
+ui 6379
+__main__ Received message from Alex: joins
+__main__ Received message from Alex: list
+ui 6379
+__main__ Received message from Alex: joins
+ui 6379
+__main__ Received message from Bob: joins
+__main__ Received message from Alex: list
+ui 6379
+__main__ Received message from Alex: joins
+ui 6379
+__main__ Received message from Bob: joins
+__main__ Received message from Bob: list
+__main__ Received message from Alex: leaves
+ui 6379
+__main__ Received message from Alex: joins
+__main__ Received message from Bob: leaves
+__main__ Received message from Alex: leaves
+ui 6379
+__main__ Received message from Alex: joins
+ui 6379
+__main__ Received message from Bob: joins
+__main__ Received message from Bob: help
+__main__ Sent reply: Available Commands:
+
+ui 6379
+__main__ Received message from Bob: joins
+ui 6379
+__main__ Received message from Alex: joins
+__main__ Received message from Bob: help
+__main__ Sent reply: Available Commands:
+- help: Show this message
+- list: Show the list of connected users
+
+__main__ Received message from Alex: leaves
+__main__ Received leave message from Alex who is not in the connected users list
+ui 6379
+__main__ Received message from Alex: joins
+__main__ Received message from Alex: help
+__main__ Sent reply to Alex: Available Commands:
+- help: Show this message
+- list: Show the list of connected users
+
+__main__ Received message from Alex: help
+__main__ Sent reply to Alex: Available Commands:
+- help: Show this message
+- list: Show the list of connected users
+ via topic yacr-Alex
+__main__ Received message from Alex: help
+__main__ Sent reply to Alex: Available Commands:
+- help: Show this message
+- list: Show the list of connected users
+ via topic yacr-alex
+__main__ Received message from Alex: list
+__main__ Sent reply to Alex: Connected users:
+ via topic yacr-alex
+__main__ Received message from Alex: list
+__main__ Sent reply to Alex: No connected users via topic yacr-alex
+__main__ Received message from Bob: leaves
+__main__ Received leave message from Bob who is not in the connected users list
+ui 6379
+__main__ Received message from Bob: joins
+__main__ Received message from Alex: list
+__main__ Sent reply to Alex: Connected users:
+Bob via topic yacr-alex
+__main__ Received message from Alex: leaves
+__main__ Received leave message from Alex who is not in the connected users list
+ui 6379
+__main__ Received message from Alex: joins
+__main__ Received message from Bob: list
+__main__ Sent reply to Bob: Connected users:
+Bob
+Alex via topic yacr-bob
+__main__ Starting status service with configuration: <config.Config object at 0x7f452d7c5fd0>
+__main__ Starting status service
+__main__ Received message from Alex: leaves
+__main__ Received leave message from Alex who is not in the connected users list
+ui 6379
+__main__ Received message from Alex: joins
+__main__ Received message from Bob: leaves
+__main__ Received leave message from Bob who is not in the connected users list
+ui 6379
+__main__ Received message from Bob: joins
+__main__ Received message from Bob: hel
+__main__ Received message from Bob: help
+__main__ Sent reply to Bob: Available Commands:
+- help: Show this message
+- list: Show the list of connected users
+ via topic yacr-bob
+__main__ Received message from Bob: list
+__main__ Sent reply to Bob: Connected users:
+Alex
+Bob
+ via topic yacr-bob
+__main__ Starting status service
+__main__ Received message from Alex: leaves
+__main__ Received leave message from Alex who is not in the connected users list
+ui 6379
+__main__ Received message from Alex: joins
+__main__ Received message from Alex: h
+__main__ Received unknown command from Alex: h
+__main__ Sent reply to Alex: Unknown command via topic yacr-alex
+__main__ Received message from Bob: leaves
+__main__ Received leave message from Bob who is not in the connected users list
+ui 6379
+__main__ Received message from Bob: joins
+__main__ Received message from Bob: list
+__main__ Sent reply to Bob: Connected users:
+Alex
+Bob
+ via topic yacr-bob
+__main__ Received message from Bob: help
+__main__ Sent reply to Bob: Available Commands:
+- help: Show this message
+- list: Show the list of connected users
+ via topic yacr-bob
