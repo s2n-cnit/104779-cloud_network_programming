@@ -108,7 +108,8 @@ Type \"end\" to terminate.
 
     def get_user_list(self: UI) -> list:
         try:
-            return ['-'.join(x.split("-")[1:]) for x in self.__redis.pubsub_channels("yacr-*")]
+            # return ['-'.join(x.split("-")[1:]) for x in self.__redis.pubsub_channels("yacr-*")]
+            return [x[5:] for x in self.__redis.pubsub_channels("yacr-*")]
         except ConnectionError as conn_err:
             self.__log.exception(
                 f"Connection error with pubsub system located at {self.__config.host}:{self.__config.port}",

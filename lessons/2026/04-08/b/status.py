@@ -30,7 +30,7 @@ def main(config: str, host: str, port: int) -> None:
     )
     connected_users = []
 
-    log.info(f"Starting status service")
+    log.info("Starting status service")
 
     while True:
         try:
