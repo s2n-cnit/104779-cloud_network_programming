@@ -104,8 +104,7 @@ Type \"end\" to terminate.
                     type = [type]
                 for i, tp in enumerate(topic):
                     self.__redis.publish(
-                        tp,
-                        json.dumps(
+                        tp,                        json.dumps(
                             dict(
                                 name=self.__config.name,
                                 type=type[i],
