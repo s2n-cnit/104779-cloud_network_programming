@@ -108,7 +108,6 @@ Type \"end\" to terminate.
 
     def get_user_list(self: UI) -> list:
         try:
-            # return ['-'.join(x.split("-")[1:]) for x in self.__redis.pubsub_channels("yacr-*")]
             return [x[5:] for x in self.__redis.pubsub_channels("yacr-*")]
         except ConnectionError as conn_err:
             self.__log.exception(
@@ -148,7 +147,8 @@ Type \"end\" to terminate.
                     if isinstance(data, int):
                         continue
                     data = json.loads(data)
-                    new_text = f'{self.__output_field.text}\n{data["name"]} {data["type"]} {data["message"]} at {data["time"]}'
+                    new_text = f'{self.__output_field.text}\n{data["name"]} {data["type"]} ' + \
+                               f'{data["message"]} at {data["time"]}'
                     self.__output_field.buffer.document = Document(
                         text=new_text, cursor_position=len(new_text)
                     )

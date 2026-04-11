@@ -146,7 +146,8 @@ Type \"end\" to terminate.
                     if isinstance(data, int):
                         continue
                     data = json.loads(data)
-                    new_text = f'{self.__output_field.text}\n{data["name"]} {data["type"]} {data["message"]} at {data["time"]}'
+                    new_text = f'{self.__output_field.text}\n{data["name"]} " + \
+                               f"{data["type"]} {data["message"]} at {data["time"]}'
                     self.__output_field.buffer.document = Document(
                         text=new_text, cursor_position=len(new_text)
                     )
