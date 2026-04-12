@@ -41,7 +41,6 @@
  12. [22nd April 2025](lessons/2025/04-22)
  13. [29th April 2025](lessons/2025/04-29)
 
-
 ### 2026
 
  1. [25th February 2026](lessons/2026/02-25)
@@ -52,7 +51,8 @@
  4. [18th March 2026](lessons/2026/03-18)
  5. [25th March 2026](lessons/2026/03-25)
  6. [01st April 2026](lessons/2026/04-01)
-
+ 7. [08th April 2026](lessons/2026/04-08)
+ 8. [15th April 2026](lessons/2026/04-15)
 
 ## Exams
 
@@ -66,7 +66,7 @@
 ### 2025
 
 1. [16th May 2025](exams/2025/05-16)
-3. [25th June 2025](exams/2025/06-25)
+2. [25th June 2025](exams/2025/06-25)
 
 ## Extra
 
