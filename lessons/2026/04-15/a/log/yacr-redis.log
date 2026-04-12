@@ -16358,3 +16358,9 @@ __main__ Sent reply to alex: Connected users:
 alice
 alex
  via topic yacr-3907f648-fb09-4bf9-af67-008278de0cff
+__main__ Received message from alex: leaves
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-c7a053d6-27dc-4601-a50b-861b3217926d
+__main__ Received message from alex: leaves
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-8ca46ed5-2d6d-4ccc-83cd-788b61df6c9a

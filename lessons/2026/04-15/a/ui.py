@@ -155,8 +155,8 @@ Type \"end\" to terminate.
                     prefix_str = ""
                 case COM_TYPE.PRIVATE:
                     prefix_str = "(P) "
-            new_text = f'{self.__output_field.text}\n{prefix_str}{data["name"]} ' + \
-                    f': {data["message"]} at {data["time"]}'
+            new_text = f'{self.__output_field.text}\n{prefix_str}{data["name"]}: ' + \
+                    f'{data["message"]} at {data["time"]}'
             self.__output_field.buffer.document = Document(
                 text=new_text, cursor_position=len(new_text)
             )
