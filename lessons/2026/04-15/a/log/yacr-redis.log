@@ -16260,3 +16260,101 @@ ui Making join validation request. Please wait...
 __main__ Received message from alex: joins
 __main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-c4d6843d-8f91-4834-9c07-2f273451012a
 __main__ Received message from alex: leaves
+ui Making join validation request. Please wait...
+__main__ Starting status service
+ui Making join validation request. Please wait...
+ui Making join validation request. Please wait...
+ui Making join validation request. Please wait...
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-alex
+ui Join validation successful: Name valid, welcome alex!
+ui Making join validation request. Please wait...
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name not valid via topic yacr-alex
+ui Join validation failed: Name not valid
+__main__ Starting status service
+__main__ Received message from alex: leaves
+__main__ Received leave message from alex who is not in the connected users list
+__main__ Starting status service
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-alex
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name not valid via topic yacr-alex
+__main__ Received message from alex: leaves
+__main__ Received message from alex: leaves
+__main__ Received leave message from alex who is not in the connected users list
+__main__ Starting status service
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-alex
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name not valid via topic yacr-alex
+__main__ Received message from alex: leaves
+__main__ Received message from alex: leaves
+__main__ Received leave message from alex who is not in the connected users list
+__main__ Starting status service
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-983cfb62-d263-4ec7-8304-ea25d0544bda
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name not valid via topic yacr-0329b11e-5e46-47c3-a119-0c23ff983e6d
+ui Name not valid
+__main__ Received message from alice: joins
+__main__ Sent reply to alice: Name valid, welcome alice! via topic yacr-421d8a5b-8d60-4d0b-9f29-aa48601bae19
+__main__ Received message from alice: list
+__main__ Sent reply to alice: Connected users:
+alex
+alice
+ via topic yacr-421d8a5b-8d60-4d0b-9f29-aa48601bae19
+__main__ Received message from alice: list
+__main__ Sent reply to alice: Connected users:
+alex
+alice
+ via topic yacr-421d8a5b-8d60-4d0b-9f29-aa48601bae19
+__main__ Starting status service
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-803f98e1-cde1-452b-9237-e586665e991c
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name not valid via topic yacr-817c504d-3727-49e7-87ab-6603c49fc95e
+ui Name not valid
+__main__ Received message from alice: joins
+__main__ Sent reply to alice: Name valid, welcome alice! via topic yacr-128e670d-6375-437c-80ce-7fd642d8a0b5
+__main__ Received message from alex: list
+__main__ Sent reply to alex: Connected users:
+alex
+alice
+ via topic yacr-803f98e1-cde1-452b-9237-e586665e991c
+__main__ Starting status service
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-d42b9780-62a0-48a3-a694-ff324fc73b46
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name not valid via topic yacr-d5efdf59-20cc-485b-a142-899fd3d8b91e
+ui Name not valid
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name not valid via topic yacr-087e3022-b86e-4205-abf6-a68bbfcc08b7
+ui Name not valid
+__main__ Received message from alice: joins
+__main__ Sent reply to alice: Name valid, welcome alice! via topic yacr-1411eb3e-6ef9-4801-bbcf-a80cba6b7b51
+__main__ Received message from alice: list
+__main__ Sent reply to alice: Connected users:
+alex
+alice
+ via topic yacr-1411eb3e-6ef9-4801-bbcf-a80cba6b7b51
+__main__ Received message from status: joins
+__main__ Sent reply to status: Name not valid via topic yacr-eac11885-0a49-4c02-ae8c-4c4e370e9e64
+ui Name not valid
+__main__ Received message from alex: list
+__main__ Sent reply to alex: Connected users:
+alex
+alice
+ via topic yacr-d42b9780-62a0-48a3-a694-ff324fc73b46
+__main__ Received message from alex: leaves
+__main__ Received message from alice: list
+__main__ Sent reply to alice: Connected users:
+alice
+ via topic yacr-1411eb3e-6ef9-4801-bbcf-a80cba6b7b51
+__main__ Received message from alex: joins
+__main__ Sent reply to alex: Name valid, welcome alex! via topic yacr-3907f648-fb09-4bf9-af67-008278de0cff
+__main__ Received message from alex: list
+__main__ Sent reply to alex: Connected users:
+alice
+alex
+ via topic yacr-3907f648-fb09-4bf9-af67-008278de0cff

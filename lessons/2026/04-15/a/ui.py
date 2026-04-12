@@ -5,9 +5,10 @@ import os
 from datetime import datetime
 from threading import Thread
 from typing import Self
-import uuid
 from functools import partial
+import uuid
 
+from enum import Enum
 import redis
 from config import Config
 from logger import Log
@@ -18,6 +19,11 @@ from prompt_toolkit.layout.layout import Layout
 from prompt_toolkit.output.color_depth import ColorDepth
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import SearchToolbar, TextArea
+
+class COM_TYPE(Enum):
+    STATUS = 1
+    PUBLIC = 2
+    PRIVATE = 3
 
 class UI:
     help_text = """
@@ -34,23 +40,7 @@ Type \"end\" to terminate.
             self.__config.port,
             decode_responses=True,
         )
-        self.__join_validation()
         self.__layout()
-
-    def __join_validation(self: Self) -> None:
-        def __process(data: dict) -> None:
-            if data['error'] is True:
-                self.__log.error(f"Join validation failed: {data['message']}")
-                self.__terminate()
-
-        self.__log.info("Making join validation request. Please wait...")
-        t: Thread = Thread(target=self.__subscribe,
-                           kwargs={"topic": f"yacr-{self.id}", "action": __process, "loop": False})
-        t.daemon = True
-        t.start()
-
-        self.__send_msg_to(user="status", message="joins")
-        self.__send_msg_to(message="joins the chat")
 
     def __layout(self: Self) -> None:
         self.__output_field: TextArea = TextArea(
@@ -133,7 +123,7 @@ Type \"end\" to terminate.
                 message = f"(=> {user}) {message}"
                 self.__send_msg_to(message=message, user=self.__config.name)
 
-    def __subscribe(self: Self, topic: str, action: callable, loop: bool = True) -> None:
+    def __subscribe(self: Self, topic: str, action: callable) -> None:
         while True:
             try:
                 sub = self.__redis.pubsub()
@@ -152,22 +142,40 @@ Type \"end\" to terminate.
                     action(data=data)
 
     def run(self: Self) -> None:
-        def __write(private: bool, data: dict) -> None:
-            private_str = "(P) " if private else ""
-            new_text = f'{self.__output_field.text}\n{private_str}{data["name"]} ' + \
-                       f': {data["message"]} at {data["time"]}'
+        def __manager(communication_type: COM_TYPE, data: dict) -> None:
+            match (communication_type):
+                case COM_TYPE.STATUS:
+                    if data.get("error", False) is True:
+                        self.__log.error(f"{data['message']}")
+                        self.__terminate()
+                    if data.get("joined", False) is True:
+                        self.__send_msg_to(message="joins the chat")
+                    prefix_str = "(S) "
+                case COM_TYPE.PUBLIC:
+                    prefix_str = ""
+                case COM_TYPE.PRIVATE:
+                    prefix_str = "(P) "
+            new_text = f'{self.__output_field.text}\n{prefix_str}{data["name"]} ' + \
+                    f': {data["message"]} at {data["time"]}'
             self.__output_field.buffer.document = Document(
                 text=new_text, cursor_position=len(new_text)
             )
 
-        t: Thread = Thread(target=self.__subscribe, kwargs={"topic": "yacr",
-                                                            "action": partial(__write, private=False)})
-        t.daemon = True
-        t.start()
+        t_status: Thread = Thread(target=self.__subscribe,
+                                  kwargs={"topic": f"yacr-{self.id}", "action": partial(__manager, communication_type=COM_TYPE.STATUS)})
+        t_status.daemon = True
+        t_status.start()
+
+        self.__send_msg_to(user="status", message="joins")
+
+        t_public: Thread = Thread(target=self.__subscribe, kwargs={"topic": "yacr",
+                                                            "action": partial(__manager, communication_type=COM_TYPE.PUBLIC)})
+        t_public.daemon = True
+        t_public.start()
 
         t_private: Thread = Thread(target=self.__subscribe,
                                    kwargs={"topic": f"yacr-{self.__config.name.lower()}",
-                                           "action": partial(__write, private=True)})
+                                           "action": partial(__manager, communication_type=COM_TYPE.PRIVATE)})
         t_private.daemon = True
         t_private.start()
 

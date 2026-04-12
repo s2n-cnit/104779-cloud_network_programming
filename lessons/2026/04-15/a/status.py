@@ -4,7 +4,7 @@ from logger import Log
 import redis
 import json
 from datetime import datetime
-
+import uuid
 
 @click.command()
 @click.option(
@@ -15,6 +15,7 @@ from datetime import datetime
 @click.option("-s", "--host", help="Hostname (or IP) of the Chat Room Server", type=str)
 @click.option("-p", "--port", help="TCP port of the Chat Room Server", type=int)
 def main(config: str, host: str, port: int) -> None:
+    status_id = str(uuid.uuid4())
     log: Log = Log(filename="log/yacr-redis.log")
 
     cfg: Config = Config(
@@ -50,22 +51,23 @@ def main(config: str, host: str, port: int) -> None:
 
                 id = data['id']
                 user = data['name'].lower()
-                topic = f"yacr-{user}"
+                topic = f"yacr-{id}"
                 message = data['message'].strip().lower()
                 log.info(f"Received message from {user}: {message}")
 
                 reply = None
                 error = False
+                joined = False
                 match (message):
                     case "help":
                         reply = "Available Commands:\n" + \
                                    "- help: Show this message\n" + \
                                    "- list: Show the list of connected users\n"
                     case "joins":
-                        topic = f"yacr-{id}"
                         if user not in connected_users and user != "status":
                             connected_users.append(user)
                             reply = f"Name valid, welcome {user}!"
+                            joined = True
                         else:
                             reply = "Name not valid"
                             error = True
@@ -88,9 +90,10 @@ def main(config: str, host: str, port: int) -> None:
                         topic,
                         json.dumps(
                             dict(
-                                id=cfg.name,
+                                id=status_id,
                                 name=cfg.name,
                                 error=error,
+                                joined = joined,
                                 message=reply,
                                 time=str(datetime.now()),
                             )
