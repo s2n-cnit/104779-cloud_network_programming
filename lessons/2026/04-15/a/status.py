@@ -64,7 +64,7 @@ def main(config: str, host: str, port: int) -> None:
                                    "- help: Show this message\n" + \
                                    "- list: Show the list of connected users\n"
                     case "joins":
-                        if user not in connected_users and user != "status":
+                        if user not in connected_users and user != cfg.name:
                             connected_users.append(user)
                             reply = f"Name valid, welcome {user}!"
                             joined = True

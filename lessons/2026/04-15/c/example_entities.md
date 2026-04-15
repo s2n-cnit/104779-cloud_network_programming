@@ -22,8 +22,8 @@ Entities:
   - leaved_at
 
 - UserRoomMessage # Relation User / Room (1) <-> Message (N)
+  - id [PK]
   - user_room_id [FK]
-  - message_id [PK]
+  - message: str
   - updated_at
   - created_at
-  - content
