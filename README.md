@@ -43,16 +43,18 @@
 
 ### 2026
 
- 1. [25th February 2026](lessons/2026/02-25)
- 2. [04th March 2026](lessons/2026/03-04)
+01. [25th February 2026](lessons/2026/02-25)
+02. [04th March 2026](lessons/2026/03-04)
     1. [TCP Client/Server Model](lessons/2026/03-04/refs/tcp-client_server-model.jpg)
     2. [TCP Client/Server Model (v2)](lessons/2026/03-04/refs/tcp-client_server-model-v2.png)
- 3. [11th March 2026](lessons/2026/03-11)
- 4. [18th March 2026](lessons/2026/03-18)
- 5. [25th March 2026](lessons/2026/03-25)
- 6. [01st April 2026](lessons/2026/04-01)
- 7. [08th April 2026](lessons/2026/04-08)
- 8. [15th April 2026](lessons/2026/04-15)
+03. [11th March 2026](lessons/2026/03-11)
+04. [18th March 2026](lessons/2026/03-18)
+05. [25th March 2026](lessons/2026/03-25)
+06. [01st April 2026](lessons/2026/04-01)
+07. [08th April 2026](lessons/2026/04-08)
+08. [15th April 2026](lessons/2026/04-15)
+09. [15th April 2026](lessons/2026/04-21)
+10. [15th April 2026](lessons/2026/04-22)
 
 ## Exams
 
