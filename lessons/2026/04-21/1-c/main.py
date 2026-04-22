@@ -29,6 +29,26 @@ def join(username: str, room: str):
         }
 
 
+@app.post("/leave")
+def leave(username: str, room: str):
+    if room not in rooms:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"room {room} not found",
+        )
+    elif username not in rooms[room]["users"]:
+        raise HTTPException(
+            status_code=status.HTTP_304_NOT_MODIFIED,
+            detail="user {username} not joined in room {room}",
+        )
+    else:
+        rooms[room]["users"].remove(username)
+        return {
+            "success": True,
+            "detail": f"user {username} left to room {room}",
+        }
+
+
 @app.get("/messages")
 def messages(username: str, room: str):
     if room not in rooms:
@@ -58,7 +78,7 @@ def add(username: str, room: str, message: str):
         )
 
     rooms[room]["messages"].append(
-        {"timestamp": datetime.now(), "message": message}
+        {"timestamp": datetime.now(), "message": message, "username": username}
     )
     return {
         "success": True,
