@@ -9,7 +9,7 @@ from sqlmodel import Field, Relationship, SQLModel, create_engine
 class UserRoom(SQLModel, table=True):
     user_id: str = Field(foreign_key="user.id", primary_key=True)
     room_id: str = Field(foreign_key="room.id", primary_key=True)
-    join_at: datetime
+    join_at: datetime | None = None
 
 
 class User(SQLModel, table=True):

@@ -53,8 +53,10 @@
 06. [01st April 2026](lessons/2026/04-01)
 07. [08th April 2026](lessons/2026/04-08)
 08. [15th April 2026](lessons/2026/04-15)
-09. [15th April 2026](lessons/2026/04-21)
-10. [15th April 2026](lessons/2026/04-22)
+09. [21st April 2026](lessons/2026/04-21)
+10. [22nd April 2026](lessons/2026/04-22)
+11. [29th April 2026](lessons/2026/04-29)
+12. [13th May 2026](lessons/2026/05-13)
 
 ## Exams
 

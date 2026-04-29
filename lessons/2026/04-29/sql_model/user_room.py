@@ -50,8 +50,8 @@ async def join_user(room_id: str, user_id: str) -> Result[UserRoom]:
 async def leave_user(room_id: str, user_id: str) -> Result[UserRoom]:
     try:
         with Session(engine) as session:
-            check_entity(session, User, id)
-            check_entity(session, Room, id)
+            check_entity(session, User, user_id)
+            check_entity(session, Room, room_id)
             ur = session.exec(
                 select(UserRoom).where(
                     UserRoom.room_id == room_id and UserRoom.user_id == user_id
@@ -76,10 +76,10 @@ def check_entity(
     session: Session, Entity: Type[SQLModel], entity_id: str
 ) -> None:
     if (
-        session.exec(select(Entity).where(Entity.id == id)).one_or_none()
+        session.exec(select(Entity).where(Entity.id == entity_id)).one_or_none()
         is None
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=ResultType[Entity].NOT_FOUND(id),
+            detail=ResultType[Entity].NOT_FOUND(entity_id),
         )
