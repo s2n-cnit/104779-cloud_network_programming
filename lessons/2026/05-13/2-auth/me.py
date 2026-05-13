@@ -138,10 +138,7 @@ async def me_room_messages(
     room_id: str,
 ) -> List[Message]:
     try:
-        with Session(engine) as session:
-            return session.exec(
-                select(Message).where(room_id in current_user.rooms)
-            ).all()
+        return list(filter(lambda r: r.id == room_id, current_user.messages))
     except Exception as e:
         raise HTTPException(
             status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -198,7 +195,7 @@ async def me_leave(
     ],
     room_id: str,
 ) -> Result[UserRoom]:
-    if room_id not in map(current_user.rooms, lambda r: r.id):
+    if room_id not in map(lambda r: r.id, current_user.rooms):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"You are not joined in room {room_id}",

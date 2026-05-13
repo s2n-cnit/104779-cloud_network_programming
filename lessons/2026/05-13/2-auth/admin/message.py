@@ -52,17 +52,17 @@ async def admin_read_messages__admin(
         )
 
 
-@router.delete("/message/{id}", tags=["Message"], summary="Read a message")
+@router.delete("/message/{message_id}", tags=["Message"], summary="Read a message")
 async def admin_delete_message(
     current_user: Annotated[
         User, Depends(RoleChecker(allowed_role_ids=["admin"]))
     ],
-    id: str,
+    message_id: str,
 ) -> Result[Message]:
     try:
         with Session(engine) as session:
             message = session.exec(
-                select(Message).where(Message.id == id)
+                select(Message).where(Message.id == message_id)
             ).one_or_none()
             if message is None:
                 raise HTTPException(
